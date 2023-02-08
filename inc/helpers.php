@@ -298,3 +298,19 @@ function ut_comment( $comment, $args, $depth ) {
 		</div>
 <?php
 }
+
+
+
+add_filter( 'body_class','ut_class_names' );
+function ut_class_names( $classes ) {
+
+	if ( is_page_template('template-home.php') ) {
+		$classes[] = 'home';
+	} elseif ( is_singular('post') || is_page_template('template-blog.php') ) {
+		$classes[] = 'blog';
+	} elseif ( is_singular('product') ) {
+		$classes[] = 'curs_page';
+	}
+
+	return $classes;
+}
