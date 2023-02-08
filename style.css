@@ -95,3 +95,55 @@ div.wpcf7-spam-blocked::after {
     border-left: 10px solid #ffa500;
 }
 /* END: Response cf7 */
+
+.row_di.depth-1,
+.row_di.depth-2,
+.row_di.depth-3,
+.row_di.depth-4,
+.row_di.depth-5,
+.row_di.depth-6,
+.row_di.depth-7,
+.row_di.depth-8 {
+    margin-top: 20px;
+}
+
+.comment.row_di {
+    margin-bottom: 0px;
+}
+
+.row_di.coments_list {
+    margin-top: 0px;
+}
+
+.comments-more {
+    margin-top: 20px !important;
+}
+
+.comments-more button {
+    width: 100%;
+}
+
+.quantity_inner button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.comment-form-email,
+.comment-form-author {
+    margin-bottom: 0 !important;
+}
+
+.comment-form-email input,
+.comment-form-author input {
+    background: #ECEEF5;
+}
+
+.blog_cat .row_10_di {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.blog_cat .row_10_di .home_blog_item {
+    height: calc(100% - 20px);
+    align-items: inherit;
+}

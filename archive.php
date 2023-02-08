@@ -7,47 +7,85 @@
  * @package unreal-themes
  */
 
-get_header();
+$i = 0;
+$count_posts = get_option('posts_per_page');
+$sticky = get_option( 'sticky_posts' );
+$category = get_queried_object();
+$args = [
+	'ignore_sticky_posts' => 1,
+	'post_type' => 'post',
+	'post_status' => 'publish',
+	'tax_query' => [
+        [
+            'taxonomy' => $category->taxonomy,
+            'terms' => $category->term_id,
+        ],
+    ],
+ ];
+	 
+if ( ! empty($sticky) ) {
+	$args['posts_per_page'] = -1;
+	$args['post__in'] = $sticky;
+	$sticky_query = new WP_Query( $args );
+	$args['post__not_in'] = $sticky;
+	unset($args['post__in']);
+}
+ 
+$args['posts_per_page'] = -1; // $count_posts;
+ 
+get_header(); 
 ?>
+ 
+	<div class="container_di">
+		<div class="row_di">
+		
+			<div class="blog_cat">
+			
+				<div class="page_header">    
+					<div class="page_title">
+						<?php the_title('<h1>', '</h1>'); ?>
+					</div>
+				</div>
+					
+				<div class="row_di more"> 
+					<div class="row_10_di">
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main">
+						<?php
+						if ( ! empty($sticky) && $sticky_query->have_posts() ) :
+							while ($sticky_query->have_posts()) : $sticky_query->the_post();
+								get_template_part('template-parts/content', get_post_type());
+								$i++;
+							endwhile;
+						endif;
+						wp_reset_query();
+						
+						$query = new WP_Query( $args );
+						
+						if ($query->have_posts()) :
+							while ($query->have_posts()) : $query->the_post();
+								get_template_part('template-parts/content', get_post_type());
+								$i++;
+							endwhile;
+						else :
+							get_template_part('template-parts/content', 'none');
+						endif;
+						wp_reset_query();
+						?>
 
-		<?php if ( have_posts() ) : ?>
+						</div>
+				</div>
+				
+				<?php if ( $i > 8 ) : ?>
+					<div class="blog_btn_more">
+						<a href="#" id="loadMore" class="btn_white">Показать еще статьи</a>
+					</div>
+				<?php endif; ?>
 
-			<header class="page-header">
-				<?php
-				the_archive_title( '<h1 class="page-title">', '</h1>' );
-				the_archive_description( '<div class="archive-description">', '</div>' );
-				?>
-			</header><!-- .page-header -->
+			</div> 
 
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) :
-				the_post();
-
-				/*
-				 * Include the Post-Type-specific template for the content.
-				 * If you want to override this in a child theme, then include a file
-				 * called content-___.php (where ___ is the Post Type name) and that will be used instead.
-				 */
-				get_template_part( 'template-parts/content', get_post_type() );
-
-			endwhile;
-
-			the_posts_navigation();
-
-		else :
-
-			get_template_part( 'template-parts/content', 'none' );
-
-		endif;
-		?>
-
-		</main><!-- #main -->
-	</div><!-- #primary -->
+		</div>
+	</div>  
 
 <?php
-get_sidebar();
+
 get_footer();
