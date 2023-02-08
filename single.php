@@ -8,30 +8,49 @@
  */
 
 get_header();
+
+while ( have_posts() ) :
+	the_post();	
 ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main">
+	<div class="container_di">
+		<div class="row_di">
+		 
+			<div class="blog_post">
+			
+				<div class="page_header">   
+					<div class="nazad"> 
+						<ul>
+							<li>
+								<a href="<?php echo ut_get_permalik_by_template('template-blog.php'); ?>" class="">
+									Назад к списку статей
+								</a>
+							</li> 
+						</ul> 
+					</div> 
+				</div>
+			
+				<?php get_template_part( 'template-parts/content', get_post_type() ); ?>
+				
+				<div class="container_di_640 article_niz">
+					<div class="row_di">
 
-		<?php
-		while ( have_posts() ) :
-			the_post();
+						<?php get_template_part( 'template-parts/content', 'share' ); ?>
 
-			get_template_part( 'template-parts/content', get_post_type() );
-
-			the_post_navigation();
-
-			// If comments are open or we have at least one comment, load up the comment template.
-			if ( comments_open() || get_comments_number() ) :
-				comments_template();
-			endif;
-
-		endwhile; // End of the loop.
-		?>
-
-		</main><!-- #main -->
-	</div><!-- #primary -->
+						<?php 
+						if ( comments_open() || get_comments_number() ) :
+							comments_template();
+						endif;
+						?>        
+						
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
 
 <?php
-get_sidebar();
+endwhile;
+
 get_footer();

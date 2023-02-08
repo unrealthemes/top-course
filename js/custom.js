@@ -126,14 +126,14 @@ jQuery(document).on('click', function(e) {
  
     
     // Убавляем кол-во по клику
-        jQuery('.quantity_inner .bt_minus').click(function() {
+    jQuery(document).on('click', '.quantity_inner .bt_minus', function() {
         let jQueryinput = jQuery(this).parent().find('.quantity');
         let count = parseInt(jQueryinput.val()) - 1;
         count = count < 1 ? 1 : count;
         jQueryinput.val(count);
     });
     // Прибавляем кол-во по клику
-    jQuery('.quantity_inner .bt_plus').click(function() {
+    jQuery(document).on('click', '.quantity_inner .bt_plus', function() {
         let jQueryinput = jQuery(this).parent().find('.quantity');
         let count = parseInt(jQueryinput.val()) + 1;
         count = count > parseInt(jQueryinput.data('max-count')) ? parseInt(jQueryinput.data('max-count')) : count;

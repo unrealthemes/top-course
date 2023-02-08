@@ -3,409 +3,78 @@
  * Template name: Blog
  */
 
+$i = 0;
+$count_posts = get_option('posts_per_page');
+$sticky = get_option( 'sticky_posts' );
+$args = [
+    'ignore_sticky_posts' => 1,
+    'post_type' => 'post',
+    'post_status' => 'publish',
+];
+    
+if ( ! empty($sticky) ) {
+    $args['posts_per_page'] = -1;
+    $args['post__in'] = $sticky;
+    $sticky_query = new WP_Query( $args );
+    $args['post__not_in'] = $sticky;
+    unset($args['post__in']);
+}
+
+$args['posts_per_page'] = -1; // $count_posts;
+
 get_header(); 
+?>
 
-if (have_posts()) : 
+<div class="container_di">
+		<div class="row_di">
+		
+			<div class="blog_cat">
+			
+				<div class="page_header">    
+					<div class="page_title">
+						<?php the_title('<h1>', '</h1>'); ?>
+					</div>
+				</div>
+					
+				<div class="row_di more"> 
+					<div class="row_10_di">
 
-    while (have_posts()) : the_post();
-    ?>
+						<?php
+						if ( ! empty($sticky) && $sticky_query->have_posts() ) :
+							while ($sticky_query->have_posts()) : $sticky_query->the_post();
+								get_template_part('template-parts/content', get_post_type());
+								$i++;
+							endwhile;
+						endif;
+						wp_reset_query();
+						
+						$query = new WP_Query( $args );
+						
+						if ($query->have_posts()) :
+							while ($query->have_posts()) : $query->the_post();
+								get_template_part('template-parts/content', get_post_type());
+								$i++;
+							endwhile;
+						else :
+							get_template_part('template-parts/content', 'none');
+						endif;
+						wp_reset_query();
+						?>
 
-        <div class="container_di">
-            <div class="row_di">
-            
-                <!-- blog_cat --> 
-                <div class="blog_cat">
-                
-                    <!-- page_header -->
-                    <div class="page_header">    
-                        <div class="page_title">
-                            <h1>Блог</h1>
-                        </div>
-                    </div>
-                    <!-- end page_header -->
-                
-                     
-                    <div class="row_di more"> 
-                        <div class="row_10_di">
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_1.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Агрегатор курсов Топ Курс, как способ жить, мыслить, и еще много других слов, чтобы...</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Программирование</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_2.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Сервисы и программы для начинающих программистов</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Управление</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_3.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Какие языки программирования самые высокооплачиваемые на 2022 год: ТОП 15</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Маркетинг</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_4.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                       <a href="#">С# разработчик: кто это, и что он делает?</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Общие навыки</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div> 
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_1.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Агрегатор курсов Топ Курс, как способ жить, мыслить, и еще много других слов, чтобы...</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Программирование</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_2.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Сервисы и программы для начинающих программистов</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Управление</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_3.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Какие языки программирования самые высокооплачиваемые на 2022 год: ТОП 15</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Маркетинг</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_4.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                       <a href="#">С# разработчик: кто это, и что он делает?</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Общие навыки</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div> 
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_1.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Агрегатор курсов Топ Курс, как способ жить, мыслить, и еще много других слов, чтобы...</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Программирование</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_2.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Сервисы и программы для начинающих программистов</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Управление</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_3.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Какие языки программирования самые высокооплачиваемые на 2022 год: ТОП 15</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Маркетинг</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_4.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                       <a href="#">С# разработчик: кто это, и что он делает?</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Общие навыки</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div> 
-                             </div>   
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_1.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Агрегатор курсов Топ Курс, как способ жить, мыслить, и еще много других слов, чтобы...</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Программирование</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_2.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Сервисы и программы для начинающих программистов</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Управление</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_3.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Какие языки программирования самые высокооплачиваемые на 2022 год: ТОП 15</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Маркетинг</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_4.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                       <a href="#">С# разработчик: кто это, и что он делает?</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Общие навыки</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div> 
-                             </div>    
-                             
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_4.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                       <a href="#">С# разработчик: кто это, и что он делает?</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Общие навыки</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div> 
-                             </div>   
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_1.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Агрегатор курсов Топ Курс, как способ жить, мыслить, и еще много других слов, чтобы...</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Программирование</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_2.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Сервисы и программы для начинающих программистов</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Управление</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_3.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Какие языки программирования самые высокооплачиваемые на 2022 год: ТОП 15</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Маркетинг</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_4.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                       <a href="#">С# разработчик: кто это, и что он делает?</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Общие навыки</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div> 
-                             </div>               
-                             
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_4.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                       <a href="#">С# разработчик: кто это, и что он делает?</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Общие навыки</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div> 
-                             </div>   
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_1.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Агрегатор курсов Топ Курс, как способ жить, мыслить, и еще много других слов, чтобы...</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Программирование</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_2.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Сервисы и программы для начинающих программистов</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Управление</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_3.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                        <a href="#">Какие языки программирования самые высокооплачиваемые на 2022 год: ТОП 15</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Маркетинг</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div>
-                             </div>
-                             
-                            <!-- col -->
-                             <div class="col_4_di">
-                                 <div class="home_blog_item item_block_white">
-                                    <div class="div home_blog_item_img"> <img src="<?php echo THEME_URI; ?>/img/blog_4.jpg" alt=""></div>
-                                    <div class="div home_blog_item_title">
-                                       <a href="#">С# разработчик: кто это, и что он делает?</a>
-                                    </div> 
-                                    <div class="div home_blog_niz"> 
-                                        <a href="#">Общие навыки</a> 
-                                        <div class="data">14.12.2022</div>
-                                    </div> 
-                                 </div> 
-                             </div> 
-                         </div>
-                    </div>
-                  
-                    <div class="blog_btn_more">
-                        <a href="#" id="loadMore" class="btn_white">Показать еще статьи</a>
-                    </div>
-                </div> 
-                <!-- end blog_cat -->  
-            </div>
-        </div>  
+						</div>
+				</div>
+				
+				<?php if ( $i > 8 ) : ?>
+					<div class="blog_btn_more">
+						<a href="#" id="loadMore" class="btn_white">Показать еще статьи</a>
+					</div>
+				<?php endif; ?>
 
-    <?php
-    endwhile; 
+			</div> 
 
-endif; 
+		</div>
+	</div>  
+
+<?php
 
 get_footer();

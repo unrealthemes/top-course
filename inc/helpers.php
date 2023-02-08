@@ -76,24 +76,9 @@ function ut_get_title_menu_by_location( $location ) {
 
 function ut_remove_footer_admin() {
 
-    echo '<span id="footer-thankyou">Тема разработана <a href="https://unrealthemes.ru/" target="_blank"><img src="' . get_template_directory_uri() . '/img/unreal.png" width="130"/></a></span>';
+    echo '<span id="footer-thankyou">Тема разработана <a href="https://unrealthemes.site/" target="_blank"><img src="' . THEME_URI . '/img/unreal.png" width="130"/></a></span>';
 }
 add_filter('admin_footer_text', 'ut_remove_footer_admin');
-
-
-
-/**
- * SVG to upload mimes.
- */
-
-function ut_add_svg_to_upload_mimes( $upload_mimes ) {
-
-    $upload_mimes['svg'] = 'image/svg+xml';
-    $upload_mimes['svgz'] = 'image/svg+xml';
-
-    return $upload_mimes;
-}
-add_filter( 'upload_mimes', 'ut_add_svg_to_upload_mimes', 10, 1 );
 
 
 
@@ -101,9 +86,9 @@ add_filter( 'upload_mimes', 'ut_add_svg_to_upload_mimes', 10, 1 );
  * Add options page ACF pro
  */ 
 
-// if( function_exists('acf_add_options_page') ) {
-// 	acf_add_options_page();
-// }
+if ( function_exists('acf_add_options_page') ) {
+	acf_add_options_page();
+}
 
 
 
@@ -127,89 +112,189 @@ add_action( 'admin_head', 'ut_admin_style' );
 
 
 
-/**
- * Custom excerpt
- */
+function ut_get_the_category_list( $separator = '', $parents = '', $post_id = false ) {
 
-// add_filter( 'excerpt_length', function() {
-// 	return 23;
-// } );
+	global $wp_rewrite;
 
-// add_filter('excerpt_more', function( $more ) {
-// 	return '...';
-// });
+	if ( ! is_object_in_taxonomy( get_post_type( $post_id ), 'category' ) ) {
+		/** This filter is documented in wp-includes/category-template.php */
+		return apply_filters( 'the_category', '', $separator, $parents );
+	}
 
+	/**
+	 * Filters the categories before building the category list.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param WP_Term[] $categories An array of the post's categories.
+	 * @param int|bool  $post_id    ID of the post we're retrieving categories for.
+	 *                              When `false`, we assume the current post in the loop.
+	 */
+	$categories = apply_filters( 'the_category_list', get_the_category( $post_id ), $post_id );
 
+	if ( empty( $categories ) ) {
+		/** This filter is documented in wp-includes/category-template.php */
+		return apply_filters( 'the_category', __( 'Uncategorized' ), $separator, $parents );
+	}
 
-/**
- *
- */
+	$rel = ( is_object( $wp_rewrite ) && $wp_rewrite->using_permalinks() ) ? 'rel="category tag"' : 'rel="category"';
 
-function ut_format_size_units( $bytes ) {
-
-    if ( $bytes >= 1073741824 ) {
-        $bytes = number_format( $bytes / 1073741824, 2 ) . ' GB';
-    } elseif ( $bytes >= 1048576 ) {
-        $bytes = number_format( $bytes / 1048576, 2 ) . ' MB';
-    } elseif ( $bytes >= 1024 ) {
-        $bytes = number_format( $bytes / 1024, 2 ) . ' KB';
-    } elseif ( $bytes > 1 ) {
-        $bytes = $bytes . ' bytes';
-    } elseif ( $bytes == 1 ) {
-        $bytes = $bytes . ' byte';
-    } else {
-        $bytes = '0 bytes';
-    }
-
-    return $bytes;
-}
-
-
-
-/**
- *	Remove prefix in default mime type ( application/pdf = pdf )
- */
-
-function ut_mime_type_without_application( $defailt_mime_type ) {
-
-	$mime_type = '';
-	$remove_txts = array( 'application/', 'video/', 'image/', 'audio/' );
-
-	foreach( $remove_txts as $remove_txt ) {
-
-		if ( strstr( $defailt_mime_type, $remove_txt ) ) {
-			$mime_type = str_replace( $remove_txt, "", $defailt_mime_type );
+	$thelist = '';
+	if ( '' === $separator ) {
+		$thelist .= '<ul class="post-categories">';
+		foreach ( $categories as $category ) {
+			$thelist .= "\n\t<li>";
+			switch ( strtolower( $parents ) ) {
+				case 'multiple':
+					if ( $category->parent ) {
+						$thelist .= get_category_parents( $category->parent, true, $separator );
+					}
+					$thelist .= '<a href="' . esc_url( get_category_link( $category->term_id ) ) . '" ' . $rel . '><span>' . $category->name . '</span></a></li>';
+					break;
+				case 'single':
+					$thelist .= '<a href="' . esc_url( get_category_link( $category->term_id ) ) . '"  ' . $rel . '><span>';
+					if ( $category->parent ) {
+						$thelist .= get_category_parents( $category->parent, false, $separator );
+					}
+					$thelist .= $category->name . '</span></a></li>';
+					break;
+				case '':
+				default:
+					$thelist .= '<a href="' . esc_url( get_category_link( $category->term_id ) ) . '" ' . $rel . '><span>' . $category->name . '</span></a></li>';
+			}
+		}
+		$thelist .= '</ul>';
+	} else {
+		$i = 0;
+		foreach ( $categories as $category ) {
+			if ( 0 < $i ) {
+				$thelist .= $separator;
+			}
+			switch ( strtolower( $parents ) ) {
+				case 'multiple':
+					if ( $category->parent ) {
+						$thelist .= get_category_parents( $category->parent, true, $separator );
+					}
+					$thelist .= '<a href="' . esc_url( get_category_link( $category->term_id ) ) . '" ' . $rel . '><span>' . $category->name . '</span></a>';
+					break;
+				case 'single':
+					$thelist .= '<a href="' . esc_url( get_category_link( $category->term_id ) ) . '" ' . $rel . '><span>';
+					if ( $category->parent ) {
+						$thelist .= get_category_parents( $category->parent, false, $separator );
+					}
+					$thelist .= "$category->name</span></a>";
+					break;
+				case '':
+				default:
+					$thelist .= '<a href="' . esc_url( get_category_link( $category->term_id ) ) . '" ' . $rel . '><span>' . $category->name . '</span></a>';
+			}
+			++$i;
 		}
 	}
 
-	return $mime_type;
+	/**
+	 * Filters the category or list of categories.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param string $thelist   List of categories for the current post.
+	 * @param string $separator Separator used between the categories.
+	 * @param string $parents   How to display the category parents. Accepts 'multiple',
+	 *                          'single', or empty.
+	 */
+	return apply_filters( 'the_category', $thelist, $separator, $parents );
 }
 
 
 
-/**
- * Remove feature image and comment for post type "page"
- */
+function ut_comment( $comment, $args, $depth ) {
 
-// function ut_cpt_support() {
-//     remove_post_type_support( 'page', 'thumbnail' );
-//     remove_post_type_support( 'page', 'comments' );
-//     remove_post_type_support( 'page', 'comments' );
-// }
-// add_action( 'admin_init', 'ut_cpt_support' );
-
-
-
-/**
- * Cancel the display of the selected term at the top in the checkbox list of terms
- */
-
-function ut_set_checked_ontop_default( $args ) {
-	// change the default parameter to false
-	if ( ! isset( $args['checked_ontop'] ) ) {
-		$args['checked_ontop'] = false;
+	if ( 'div' === $args['style'] ) {
+		$tag       = 'div';
+		$add_below = 'comment';
+	} else {
+		$tag       = 'li';
+		$add_below = 'div-comment';
 	}
 
-	return $args;
+	$classes = ' ' . comment_class( empty( $args['has_children'] ) ? 'row_di' : 'parent row_di', null, null, false );
+	$count = get_comment_meta($comment->comment_ID, 'vote', true);
+	$count = ( $count == '' ) ? 0 : $count;
+	$disabled = ( isset($_COOKIE["vote-comment-" . $comment->comment_ID]) ) ? 'disabled' : '';
+	?>
+
+	<<?php echo $tag, $classes; ?> id="comment-<?php comment_ID(); ?>">
+		<div class="comment_vn">
+
+			<?php if ( 'div' != $args['style'] ) { ?>
+				<div id="div-comment-<?php comment_ID(); ?>" class="comment-body">
+			<?php } ?>
+
+				<div class="row_di coments_title">
+					<div class="coments_l">
+						<?php echo mb_substr($comment->comment_author, 0, 1); ?>
+					</div>
+					<div class="coments_r">
+						<div class="coments_name"><?php echo $comment->comment_author; ?></div> 
+						<div class="data">
+							<?php
+							printf(
+								__( '%1$s at %2$s' ),
+								get_comment_date(),
+								get_comment_time()
+							); 
+							?>
+							<?php edit_comment_link( __( '(Edit)' ), '  ', '' ); ?>
+						</div>
+					</div>
+					
+					<div class="quantity_inner">        
+						<button class="bt_plus" data-id="<?php comment_ID(); ?>" <?php echo $disabled; ?>>
+							<svg width="16" height="8" viewBox="0 0 16 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M15 6.5L8 1.5L1 6.5" stroke="#4967D0" stroke-width="2"></path>
+							</svg> 
+						</button>
+						<input type="text" class="quantity" value="<?php echo esc_attr($count); ?>">
+						<button class="bt_minus" data-id="<?php comment_ID(); ?>" <?php echo $disabled; ?>>
+							<svg width="16" height="8" viewBox="0 0 16 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M15 1.5L8 6.5L1 1.5" stroke="#4967D0" stroke-width="2"></path>
+							</svg> 
+						</button>
+					</div>
+				</div>
+				
+				<div class="coment_item_cintent">
+					<?php comment_text(); ?>
+				</div>
+				
+				<div class="coment_niz">
+					<!-- <div class="coment_niz_edit"><a class="comment-reply-link" href="#">Ответить</a></div> -->
+					<div class="coment_niz_edit reply">
+						<?php
+						comment_reply_link(
+							array_merge(
+								$args,
+								[
+									'add_below' => $add_below,
+									'depth'     => $depth,
+									'max_depth' => $args['max_depth']
+								]
+							)
+						); ?>
+					</div>
+					<!-- <a href="#" class="option">
+						<svg width="20" height="4" viewBox="0 0 20 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="18" cy="2" r="2" fill="#B8B9BA"></circle>
+						<circle cx="10" cy="2" r="2" fill="#B8B9BA"></circle>
+						<circle cx="2" cy="2" r="2" fill="#B8B9BA"></circle>
+						</svg> 
+					</a> -->
+				</div>
+
+			<?php if ( 'div' != $args['style'] ) { ?>
+				</div>
+			<?php } ?>
+
+		</div>
+<?php
 }
-add_filter( 'wp_terms_checklist_args', 'ut_set_checked_ontop_default', 10 );
