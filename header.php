@@ -2,6 +2,8 @@
 $txt_logo = get_field('txt_logo', 'option');
 $logo_id = get_field('logo_header', 'option');
 $txt_menu = get_field('txt_menu_header', 'option');
+
+
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +17,7 @@ $txt_menu = get_field('txt_menu_header', 'option');
     <link rel="icon" href="img/favicon.png" sizes="32x32"> 
 	<?php wp_head(); ?>
 </head> 
-<body <?php body_class('home'); ?>>
+<body <?php body_class(); ?>>
 	<?php wp_body_open(); ?>
 
     <header> 

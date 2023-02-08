@@ -147,3 +147,7 @@ div.wpcf7-spam-blocked::after {
     height: calc(100% - 20px);
     align-items: inherit;
 }
+
+.contacts-content {
+    padding: 20px;
+}
