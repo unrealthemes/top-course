@@ -63,8 +63,10 @@ class UT_Theme_Helper {
   function register_menus() {
 
   	register_nav_menus( [
-  	  'menu_1' => esc_html__( 'Header', 'unreal-theme' ),
-  	  'menu_2' => esc_html__( 'Footer', 'unreal-theme' ),
+  	  'header' => esc_html__( 'Header', 'unreal-theme' ),
+  	  'footer_l' => esc_html__( 'Footer (слева)', 'unreal-theme' ),
+  	  'footer_r' => esc_html__( 'Footer (справа)', 'unreal-theme' ),
+  	  'footer_b' => esc_html__( 'Footer (снизу)', 'unreal-theme' ),
   	] );
   }
 
