@@ -314,3 +314,10 @@ function ut_class_names( $classes ) {
 
 	return $classes;
 }
+
+
+
+add_action( 'init', 'ut_remove_product_editor' );
+function ut_remove_product_editor() {
+	remove_post_type_support( 'product', 'editor' );
+}

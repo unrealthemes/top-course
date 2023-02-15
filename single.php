@@ -22,7 +22,7 @@ while ( have_posts() ) :
 					<div class="nazad"> 
 						<ul>
 							<li>
-								<a href="<?php echo ut_get_permalik_by_template('template-blog.php'); ?>" class="">
+								<a href="<?php echo ut_get_permalik_by_template('template-blog.php'); ?>">
 									Назад к списку статей
 								</a>
 							</li> 
