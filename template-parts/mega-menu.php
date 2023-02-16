@@ -33,7 +33,7 @@ $categories = get_terms(
                     <a href="<?php echo esc_url($link); ?>">
 
                         <?php if ( $image ) : ?>
-                            <img src="<?php echo esc_attr($image); ?>" alt="<?php echo esc_html($category->esc_attr); ?>">
+                            <img src="<?php echo esc_attr($image); ?>" alt="<?php echo esc_attr($category->name); ?>">
                         <?php endif; ?>
 
                         <span><?php echo esc_html($category->name); ?></span>

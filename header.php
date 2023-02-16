@@ -59,20 +59,35 @@ $txt_menu = get_field('txt_menu_header', 'option');
                         </div> 
                     </div> 
 
-                    <div class="header_search">  
-                        <form method="get" class="searchform pk_vizible" id="searchform" action="#">
-                            <input type="text" class="search_input" name="s" autocomplete="off" placeholder="Что будем искать?">
+                    <div class="header_search"> 
+                        
+                        <form class="searchform pk_vizible" role="search" method="get" action="<?php echo home_url('/'); ?>">
+                            <input  class="search_input" 
+                                    type="search" 
+                                    value="<?php echo get_search_query(); ?>"  
+                                    name="s" 
+                                    id="s"
+                                    placeholder="Что будем искать?" 
+                                    required>
                             <input type="submit" class="submit " value="Найти"> 
                         </form>
+
                         <div class="xs_vizible search_xs">
                             <i class="submit click_open"></i>
                             <div class="mobile_search">
-                                <form method="get" class="xs_vizible" action="#">
-                                    <input type="text" class="search_input" name="s" autocomplete="off" placeholder="Что будем искать?">
-                                    <input type="submit" class="submit " value="Найти"> 
+                                <form class="xs_vizible" role="search" method="get" action="<?php echo home_url('/'); ?>">
+                                    <input  class="search_input" 
+                                            type="search" 
+                                            value="<?php echo get_search_query(); ?>"  
+                                            name="s" 
+                                            id="s"
+                                            placeholder="Что будем искать?" 
+                                            required>
+                                    <input type="submit" class="submit" value="Найти">
                                 </form>
                             </div>
                         </div>
+
                     </div>  
   
                     <div class="header_menu2">

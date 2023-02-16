@@ -16,6 +16,7 @@ class UT_Theme_Helper {
 
 	public $comments;
 	public $breadcrumbs;
+	public $home;
 
 	private function __construct() {
 
@@ -50,6 +51,7 @@ class UT_Theme_Helper {
 
 		$this->comments = UT_Comments::get_instance();
 		$this->breadcrumbs = UT_Breadcrumbs::get_instance();
+		$this->home = UT_Home::get_instance();
 	}
 
 	/**
@@ -60,7 +62,7 @@ class UT_Theme_Helper {
 		add_action( 'wp_enqueue_scripts', [ $this, 'load_scripts_n_styles' ] );
 		add_action( 'after_setup_theme',  [ $this, 'register_menus' ] );
 		add_action( 'after_setup_theme',  [ $this, 'add_theme_support' ] );
-		add_action( 'widgets_init', [ $this, 'widgets_init' ] );
+		// add_action( 'widgets_init', [ $this, 'widgets_init' ] );
 	}
 
 	function register_menus() {
@@ -87,18 +89,18 @@ class UT_Theme_Helper {
 		add_theme_support( 'woocommerce' );
 	}
 
-	public function widgets_init() {
+	// public function widgets_init() {
  
-		register_sidebar( array(
-			'name'          => 'UT Widget Area',
-			'id'            => 'ut-widget',
-			'before_widget' => '<div class="chw-widget">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<h2 class="chw-title">',
-			'after_title'   => '</h2>',
-		) );
+	// 	register_sidebar( array(
+	// 		'name'          => 'UT Widget Area',
+	// 		'id'            => 'ut-widget',
+	// 		'before_widget' => '<div class="chw-widget">',
+	// 		'after_widget'  => '</div>',
+	// 		'before_title'  => '<h2 class="chw-title">',
+	// 		'after_title'   => '</h2>',
+	// 	) );
 	 
-	}
+	// }
 	
 
   	function load_scripts_n_styles() {
@@ -149,6 +151,7 @@ class UT_Theme_Helper {
   		include_once 'helpers.php';
   		include_once 'class.comments.php';
   		include_once 'class.breadcrumbs.php';
+  		include_once 'class.home.php';
 
   	}
 
