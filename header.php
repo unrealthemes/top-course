@@ -14,7 +14,6 @@ $txt_menu = get_field('txt_menu_header', 'option');
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="theme-color" content="#4967D0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="img/favicon.png" sizes="32x32"> 
 	<?php wp_head(); ?>
 </head> 
 <body <?php body_class(); ?>>

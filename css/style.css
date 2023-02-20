@@ -324,7 +324,7 @@ body .page-breadcrumb ul li a:before {content: '';background-image: url(../img/a
 .produkt_short .active {color: #4967D0;}
 .produkt_short span {display: inline-block;float: left;}
 .produkt_short svg {display: inline-block;float: left; margin-left: 10px;}
-.produkt_short a:first-child {font-weight: 500;color: #4967D0;}
+/* .produkt_short a:first-child {font-weight: 500;color: #4967D0;} */
 
 
 
@@ -347,7 +347,7 @@ body .page-breadcrumb ul li a:before {content: '';background-image: url(../img/a
 .cat_img img { min-height: 130px;}
 .cat_item_vn .row {align-items: stretch;}
 .cat_item_title a {color: #212529;font-weight: 700; font-size: 18px;}
-.rating span {margin-left: 10px;color: #212529;font-weight: 500;} 
+.rating span {/*margin-left: 10px;*/color: #212529;font-weight: 500;} 
 .review_rating {display: flex;}
 .cat_item_title {margin-bottom: 10px;}
 .cat_desk {margin-top: 5px;}
