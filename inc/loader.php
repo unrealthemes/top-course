@@ -17,6 +17,7 @@ class UT_Theme_Helper {
 	public $comments;
 	public $breadcrumbs;
 	public $home;
+	public $course_filter;
 
 	private function __construct() {
 
@@ -52,6 +53,7 @@ class UT_Theme_Helper {
 		$this->comments = UT_Comments::get_instance();
 		$this->breadcrumbs = UT_Breadcrumbs::get_instance();
 		$this->home = UT_Home::get_instance();
+		$this->course_filter = UT_Course_Filter::get_instance();
 	}
 
 	/**
@@ -152,6 +154,7 @@ class UT_Theme_Helper {
   		include_once 'class.comments.php';
   		include_once 'class.breadcrumbs.php';
   		include_once 'class.home.php';
+  		include_once 'course-filter.php';
 
   	}
 

@@ -36,7 +36,7 @@ $(".cd-dropdown-content").first().show();
         	}
         },
         	exitMenu: function() {
-        		// $('.cd-dropdown-content').find('.is-active').removeClass('is-active'); (удаляем клас когда урали мышку)
+        		// $('.cd-dropdown-content').find('.is-active').removeClass('is-active'); (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
         		return false;
         	},
         submenuDirection: submenuDirection,
@@ -86,4 +86,13 @@ $(".cd-dropdown-content").first().show();
 		  	})
 		});
 	}
+
+	$('.produkt_short.pk_vizible a, .mobile_short .big a').on('click', function(event){
+		event.preventDefault();
+		var selected = $(this).data('orderby');
+		$('select[name="orderby"]').val(selected).change();
+	});
+
+	$('nav.prdctfltr-pagination.prdctfltr-pagination-load-more .button').css('with', '100%');
+
 });
