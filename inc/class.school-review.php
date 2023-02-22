@@ -44,7 +44,7 @@ class UT_School_Review {
         $comment_school_ID = ! isset( $data['school'] ) ? 0 : $data['school'];
         $comment_content   = ! isset( $data['school_comment'] ) ? '' : $data['school_comment'];
         $comment_rating    = ! isset( $data['school_rating'] ) ? 0 : $data['school_rating'];
-        $comment_approved  = ! isset( $data['comment_approved'] ) ? 1 : $data['comment_approved'];
+        $comment_approved  = 0; // ! isset( $data['comment_approved'] ) ? 1 : $data['comment_approved'];
         $user_id = ! isset( $data['user_id'] ) ? 0 : $data['user_id'];
 
         $compacted = [
@@ -78,7 +78,7 @@ class UT_School_Review {
 
         $value = 0;
         $table = $wpdb->prefix . 'school_comments';
-        $reviews = $wpdb->get_results("SELECT * FROM $table WHERE comment_school_ID = $school_id", 'ARRAY_A');
+        $reviews = $wpdb->get_results("SELECT * FROM $table WHERE comment_school_ID = $school_id AND comment_approved = 1", 'ARRAY_A');
 
         if ( $reviews ) {
             foreach ( (array)$reviews as $review ) {

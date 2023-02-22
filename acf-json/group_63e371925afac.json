@@ -478,6 +478,120 @@
             "append": ""
         },
         {
+            "key": "field_63f6246bc641e",
+            "label": "Отзывы",
+            "name": "reviews_rc_filter",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Добавить отзыв",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_63f624aac641f",
+                    "label": "Полное имя",
+                    "name": "fullname_reviews_rc_filter",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_63f6246bc641e"
+                },
+                {
+                    "key": "field_63f624c5c6420",
+                    "label": "Рейтинг",
+                    "name": "rating_reviews_rc_filter",
+                    "aria-label": "",
+                    "type": "radio",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "1": "1",
+                        "2": "2",
+                        "3": "3",
+                        "4": "4",
+                        "5": "5"
+                    },
+                    "default_value": "",
+                    "return_format": "value",
+                    "allow_null": 0,
+                    "other_choice": 0,
+                    "layout": "horizontal",
+                    "save_other_choice": 0,
+                    "parent_repeater": "field_63f6246bc641e"
+                },
+                {
+                    "key": "field_63f62501c6421",
+                    "label": "Дата",
+                    "name": "date_reviews_rc_filter",
+                    "aria-label": "",
+                    "type": "date_picker",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "F j, Y",
+                    "return_format": "F j, Y",
+                    "first_day": 1,
+                    "parent_repeater": "field_63f6246bc641e"
+                },
+                {
+                    "key": "field_63f62539c6422",
+                    "label": "Текст отзыва",
+                    "name": "content_reviews_rc_filter",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "rows": "",
+                    "placeholder": "",
+                    "new_lines": "",
+                    "parent_repeater": "field_63f6246bc641e"
+                }
+            ]
+        },
+        {
             "key": "field_63ef8a47839a5",
             "label": "Текст ссылки",
             "name": "txt_btn_rc_filter",
@@ -591,5 +705,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1676643127
+    "modified": 1677075795
 }

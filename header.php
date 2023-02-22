@@ -114,9 +114,9 @@ $txt_menu = get_field('txt_menu_header', 'option');
                         </nav>
                     </div>      
                     
-                    <div class="login pk_vizible">
+                    <!-- <div class="login pk_vizible">
                         <a href="" class="btn_white">Войти</a>
-                    </div> 
+                    </div>  -->
                     
                     <?php get_template_part('template-parts/mega-menu'); ?>
                     
