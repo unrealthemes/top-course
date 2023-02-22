@@ -45,7 +45,7 @@ class UT_Breadcrumbs {
             if ( isset($elms['single']['product_cat__tax_crumbs']) ) {
                 foreach ( (array)$elms['single']['product_cat__tax_crumbs'] as $key => $item ) {
 
-                    $sub_list = '<div class="sub-crumbs">';
+                    $sub_list = '<span class="sub-sep"></span><div class="sub-crumbs">';
                     $term = get_term_by( 'name', $item->name, $tax_name );
 
                     if ( $term->parent != 0 ) {

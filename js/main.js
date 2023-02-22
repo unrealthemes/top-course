@@ -1,4 +1,11 @@
 jQuery(document).ready(function($){
+	
+	$(document).on('click', '.sub-sep', function(event){
+		event.preventDefault();
+		// $('.page-breadcrumb ul li').removeClass('active');
+		$(this).parent().toggleClass('active');
+	});
+
 	//open/close mega-navigation
 	$('.cd-dropdown-trigger').on('click', function(event){
 		event.preventDefault();
