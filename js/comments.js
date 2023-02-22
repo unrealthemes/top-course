@@ -7,13 +7,15 @@ let COMMENTS = {
         COMMENTS.loadmore_handler();
         COMMENTS.like_handler();
         COMMENTS.dislike_handler();
+        COMMENTS.show_reviews();
+        COMMENTS.school_reviews();
 
     }, 
 
     loadmore_handler: function loadmore_handler() {
 
          // load more button click event
-         $('.comments-more button').click( function(){
+         $('.comments-more button').click( function() {
             var button = $(this);
             button.prop('disabled', true);
             // decrease the current comment page value
@@ -49,7 +51,7 @@ let COMMENTS = {
 
     like_handler: function like_handler() {
 
-        $(document).on('click', '.bt_plus', function(){
+        $(document).on('click', '.bt_plus', function() {
 
             $(this).parent().find('button').prop('disabled', true);
             var id = $(this).data('id');
@@ -74,7 +76,7 @@ let COMMENTS = {
     
     dislike_handler: function dislike_handler() {
 
-        $(document).on('click', '.bt_minus', function(){
+        $(document).on('click', '.bt_minus', function() {
 
             $(this).parent().find('button').prop('disabled', true);
             var id = $(this).data('id');
@@ -96,6 +98,57 @@ let COMMENTS = {
             });
         });
     },
+
+    show_reviews: function show_reviews() { 
+
+        $('#show_reviews').on('click', function(event) { 
+            event.preventDefault();
+            $(this).hide();
+            $('.otziv .item.comment-hide').show();
+        });
+    },
+
+    school_reviews: function school_reviews() {
+
+        /* 1. Visualizing things on Hover - See next part for action on click */
+        $('#stars li').on('mouseover', function(){
+            var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+        
+            // Now highlight all the stars that's not after the current hovered star
+            $(this).parent().children('li.star').each(function(e){
+            if (e < onStar) {
+                $(this).addClass('hover');
+            } else {
+                $(this).removeClass('hover');
+            }
+            });
+            
+        }).on('mouseout', function(){
+            $(this).parent().children('li.star').each(function(e){
+                $(this).removeClass('hover');
+            });
+        });
+        
+        
+        /* 2. Action to perform on click */
+        $('#stars li').on('click', function(){
+            var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+            var stars = $(this).parent().children('li.star');
+            
+            for (var i = 0; i < stars.length; i++) {
+                $(stars[i]).removeClass('selected');
+            }
+            
+            for (i = 0; i < onStar; i++) {
+                $(stars[i]).addClass('selected');
+            }
+            
+            // JUST RESPONSE (Not needed)
+            var ratingValue = parseInt($('#stars li.selected').last().data('value'), 10);
+            $("#school_rating").val(ratingValue);
+            
+        });
+    }
 
 };
 

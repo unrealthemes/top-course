@@ -35,6 +35,7 @@ $school_img_url = wp_get_attachment_image_url( $school_img_id, 'full' );
 $school_img_url = ( !$school_img_url ) ? wc_placeholder_img_src() : $school_img_url;
 $duration_course = get_field('duration_course');
 $start_course = get_field('start_course');
+$rating_data = ut_help()->school_review->get_rating($school->term_id);
 ?>
 
 <div class="cat_item">
@@ -55,7 +56,16 @@ $start_course = get_field('start_course');
 					</div>
 				<?php endif; ?>
 				
-				<?php get_template_part('woocommerce/loop/school', 'rating', ['class' => 'pk_vizible_flex']); ?> 
+				<?php 
+				get_template_part(
+					'woocommerce/loop/school', 
+					'rating', 
+					[
+						'class' => 'pk_vizible_flex',
+						'rating_data' => $rating_data,
+					]
+				); 
+				?> 
 				
 			</div>
 			<div class="cat_item_c"> 
@@ -85,7 +95,16 @@ $start_course = get_field('start_course');
 				</div>
 			<?php endif; ?>
 	
-			<?php get_template_part('woocommerce/loop/school', 'rating', ['class' => 'xs_vizible_flex']); ?>
+			<?php 
+			get_template_part(
+				'woocommerce/loop/school', 
+				'rating', 
+				[
+					'class' => 'xs_vizible_flex',
+					'rating_data' => $rating_data,
+				]
+			); 
+			?> 
 			
 			<div class="cat_item_r">
 				<div class="price">

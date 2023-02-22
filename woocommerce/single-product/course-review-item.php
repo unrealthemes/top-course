@@ -1,5 +1,6 @@
 <?php 
 $comment = $args['comment'];
+$class = $args['class'];
 $rating = get_comment_meta($comment->comment_ID, 'rating', true);
 $count = get_comment_meta($comment->comment_ID, 'vote', true);
 $count = ( $count == '' ) ? 0 : $count;
@@ -7,7 +8,7 @@ $disabled = ( isset($_COOKIE["vote-comment-" . $comment->comment_ID]) ) ? 'disab
 $first_letter = strtoupper(mb_substr($comment->comment_author, 0, 1));
 ?>
 
-<div id="comment-<?php echo esc_attr($comment->comment_ID); ?>" class="item">
+<div id="comment-<?php echo esc_attr($comment->comment_ID); ?>" class="item <?php echo esc_attr($class); ?>">
     <div class="item_block_white">
     
         <div class="row_di review_title">

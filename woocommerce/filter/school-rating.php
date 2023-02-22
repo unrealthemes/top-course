@@ -17,12 +17,12 @@ $schools = get_field('schools_sr_filter', 'option');
                 foreach ($schools as $key => $school) : 
                     $count = $key + 1;
                     $link = get_term_link( (int)$school->term_id, $school->taxonomy );
+                    $rating_data = ut_help()->school_review->get_rating($school->term_id);
                 ?>
 
                     <?php if ($count == 1 || $count % 6 == 0) : ?>
                     <ul>
-                    <?php endif; ?>
-
+                    <?php endif; ?> 
 
                         <li>
                             <div class="carousel_item">
@@ -39,23 +39,18 @@ $schools = get_field('schools_sr_filter', 'option');
                                             </symbol>
                                         </svg>                                             
                                         <div class="c-rate">
-                                            <svg class="c-icon diactive" width="20" height="20">
-                                                <use xlink:href="#star"></use>
-                                            </svg>
-                                            <svg class="c-icon diactive" width="20" height="20">
-                                                <use xlink:href="#star"></use>
-                                            </svg>
-                                            <svg class="c-icon diactive" width="20" height="20">
-                                                <use xlink:href="#star"></use>
-                                            </svg>
-                                            <svg class="c-icon diactive" width="20" height="20">
-                                                <use xlink:href="#star"></use>
-                                            </svg>
-                                            <svg class="c-icon " width="20" height="20">
-                                                <use xlink:href="#star"></use>
-                                            </svg>
+                                            
+                                            <?php 
+                                            for ($i = 1; $i <= 5; $i++) : 
+                                                $class = ( $i <= round($rating_data['rating']) ) ? ' diactive' : '';
+                                            ?>
+                                                <svg class="c-icon<?php echo esc_attr($class); ?>" width="20" height="20">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                            <?php endfor; ?>
+
                                         </div>
-                                        <span>4.0</span>   
+                                        <span><?php echo esc_html($rating_data['rating']); ?></span>   
                                     </div>
                                 </div>
                             </div>

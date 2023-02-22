@@ -129,6 +129,24 @@ class UT_Home {
                     ]
                 ]
             ]);
+            
+            acf_register_block_type([
+                'name'              => 'reviews',
+                'title'             => __('Отзывы'),
+                // 'description'       => __('A custom reviews.'),
+                'render_template'   => 'template-parts/home/reviews.php',
+                'category'          => 'reviews',
+                'icon'              => 'welcome-learn-more',
+                'keywords'          => [ 'Отзывы' ],
+                'example'           => [
+                    'attributes' => [
+                        'mode' => 'preview',
+                        'data' => [
+                            'is_preview' => true
+                        ]
+                    ]
+                ]
+            ]);
 
         }
     }
