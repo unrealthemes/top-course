@@ -192,7 +192,9 @@ while ( have_posts() ) :
         </div>
     </div> 
 
-    <?php get_template_part('template-parts/modals/add-review', '', []); ?>
+    <?php get_template_part('template-parts/modals/add', 'review', []); ?>
+    
+    <?php get_template_part('template-parts/modals/add-school', 'review', []); ?>
 
 <?php
 endwhile;

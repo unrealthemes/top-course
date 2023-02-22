@@ -138,12 +138,13 @@ div.wpcf7-spam-blocked::after {
     background: #ECEEF5;
 }
 
+.home_blog .row_10_di,
 .blog_cat .row_10_di {
     display: flex;
     flex-wrap: wrap;
 }
 
-.blog_cat .row_10_di .home_blog_item {
+.home_blog_item {
     height: calc(100% - 20px);
     align-items: inherit;
 }
@@ -420,7 +421,7 @@ nav.prdctfltr-pagination.prdctfltr-pagination-load-more .button:hover {
     display: block;
 }
 
-#respond {
+#review_form {
     max-width: 350px;
 }
 
@@ -439,6 +440,35 @@ nav.prdctfltr-pagination.prdctfltr-pagination-load-more .button:hover {
     width: 100%;
 }
 
-/* .woocommerce p.stars a::before {
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjQgMjQ7IiB4bWw6c3BhY2U9InByZXNlcnZlIj48c3R5bGUgdHlwZT0idGV4dC9jc3MiPi5zdDB7ZmlsbDojRjVDNDE3O308L3N0eWxlPjxnPjxnPjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik04LjgsOC40YzAsMC0zLjgsMC40LTYuMywwLjdDMi4zLDkuMiwyLjEsOS40LDIsOS42QzIsOS44LDIsMTAuMSwyLjIsMTAuM2MxLjksMS44LDQuNyw0LjUsNC43LDQuNWMwLDAtMC44LDMuOS0xLjMsNi41YzAsMC4yLDAsMC41LDAuMiwwLjZDNiwyMiw2LjMsMjIsNi41LDIxLjljMi4yLTEuMyw1LjUtMy4zLDUuNS0zLjNzMy4zLDIsNS41LDMuM2MwLjIsMC4xLDAuNSwwLjEsMC42LDBjMC4yLTAuMSwwLjMtMC40LDAuMi0wLjZjLTAuNS0yLjYtMS4zLTYuNS0xLjMtNi41czIuOC0yLjcsNC43LTQuNUMyMiwxMC4xLDIyLDkuOCwyMiw5LjZzLTAuMy0wLjQtMC41LTAuNGMtMi41LTAuMy02LjMtMC43LTYuMy0wLjdzLTEuNi0zLjYtMi42LTYuMUMxMi40LDIuMiwxMi4yLDIsMTIsMmMtMC4yLDAtMC40LDAuMi0wLjUsMC40QzEwLjQsNC44LDguOCw4LjQsOC44LDguNHoiLz48L2c+PC9nPjwvc3ZnPg==');
-} */
+#school_rating,
+.otziv .item.comment-hide {
+    display: none;
+}
+
+.rating-stars ul {
+    list-style-type:none;
+    padding:0;
+    -moz-user-select:none;
+    -webkit-user-select:none;
+}
+
+.rating-stars ul > li.star {
+    display:inline-block;
+}
+  
+/* Idle State of the stars */
+.rating-stars ul > li.star > i.fa {
+    font-size: 20px; /* Change the size of the stars */
+    color:#c8d1f1; /* Color on idle state */
+}
+  
+/* Hover state of the stars */
+.rating-stars ul > li.star.hover > i.fa {
+    color:#4967d0;
+}
+  
+/* Selected state of the stars */
+.rating-stars ul > li.star.selected > i.fa {
+    color:#4967d0;
+    font-size: 20px;
+}

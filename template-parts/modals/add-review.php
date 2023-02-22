@@ -1,4 +1,6 @@
-
+<?php 
+global $product;
+?>
 
 <div class="modal-wrapper" id="add_review">
 
@@ -47,7 +49,8 @@
                         $field_html .= '&nbsp;<span class="required">*</span>';
                     }
 
-                    $field_html .= '</label><input id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" type="' . esc_attr( $field['type'] ) . '" value="' . esc_attr( $field['value'] ) . '" size="30" ' . ( $field['required'] ? 'required' : '' ) . ' /></p>';
+                    $field_html .= '</label>
+                                    <input id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" type="' . esc_attr( $field['type'] ) . '" value="' . esc_attr( $field['value'] ) . '" size="30" ' . ( $field['required'] ? 'required' : '' ) . ' /></p>';
 
                     $comment_form['fields'][ $key ] = $field_html;
                 }

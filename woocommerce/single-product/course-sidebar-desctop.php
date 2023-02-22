@@ -11,28 +11,33 @@ $school = (isset($schools[0])) ? $schools[0] : null;
 $link = get_field('link_school', $school);
 ?>
 
-<!-- page_sidebar -->
 <div class="col_1_40_di curs_page_sidebar pk_vizible">
-    <!-- brand -->
     <div class="brand">
+
         <div class="brand_img">
             <a href="<?php echo esc_url($link); ?>" target="_blank">
                 <img src="<?php echo $img_url; ?>" alt="<?php echo esc_attr($school->name); ?>" >
             </a>
         </div>
+
         <div class="brand_title">
             <a href="<?php echo esc_url($link); ?>" target="_blank">
                 <?php echo esc_html($school->name); ?>
             </a>
         </div> 
+
         <div class="brand_a">
             <a href="<?php echo esc_url($link); ?>" target="_blank" class="btn">На сайт курса</a>
-            <a href="#" class="btn_white">Оставить отзыв</a>
+
+            <?php if ($school) : ?>
+                <a data-fancybox data-src="#add_school_review" href="javascript:;" class="btn_white" data-school-id="<?php echo $school->term_id; ?>">
+                    Оставить отзыв
+                </a>
+            <?php endif; ?>
+            
         </div>
     </div>
-    <!-- end brand -->
         
     <?php get_template_part('woocommerce/single-product/course', 'share', ['link' => $link]); ?>
     
 </div>
-<!-- end page_sidebar --> 

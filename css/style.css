@@ -243,7 +243,7 @@ header {/* position: relative; *//* z-index: 99999; */position: fixed;z-index: 1
 .top_curs .block_title h2 {margin-bottom: 30px;}
 
 /* home_blog */
-.home_blog_item {position: relative;height: 280px;/* align-items: flex-start; */justify-content: space-between;display: flex;flex-wrap: wrap;flex-direction: column;} 
+.home_blog_item {position: relative;/* align-items: flex-start; */justify-content: space-between;display: flex;flex-wrap: wrap;flex-direction: column;} 
 .home_blog_item_title a {display: block;font-weight: 700;color: #212529;margin-bottom: 0px;font-size: 16px;}
 .home_blog_item_img {margin-bottom: 10px;/* display: flex; *//* flex-direction: column; */}
 .home_blog .col_4_di {padding: 0 10px;}

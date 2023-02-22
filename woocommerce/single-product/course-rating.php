@@ -13,7 +13,7 @@ $rating_count = $product->get_rating_count();
 $review_count = $product->get_review_count();
 $average      = $product->get_average_rating();
 
-if ( $rating_count > 0 ) : 
+// if ( $rating_count > 0 ) : 
 ?>
 
     <div class="rating_curse">
@@ -102,4 +102,4 @@ if ( $rating_count > 0 ) :
         </div>  
     </div>
 
-<?php endif; ?>
+<?php //endif; ?>

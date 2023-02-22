@@ -18,6 +18,7 @@ class UT_Theme_Helper {
 	public $breadcrumbs;
 	public $home;
 	public $course_filter;
+	public $school_review;
 
 	private function __construct() {
 
@@ -54,6 +55,7 @@ class UT_Theme_Helper {
 		$this->breadcrumbs = UT_Breadcrumbs::get_instance();
 		$this->home = UT_Home::get_instance();
 		$this->course_filter = UT_Course_Filter::get_instance();
+		$this->school_review = UT_School_Review::get_instance();
 	}
 
 	/**
@@ -62,6 +64,7 @@ class UT_Theme_Helper {
 	public function register_hooks() {
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'load_scripts_n_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'load_admin_scripts_n_styles' ] );
 		add_action( 'after_setup_theme',  [ $this, 'register_menus' ] );
 		add_action( 'after_setup_theme',  [ $this, 'add_theme_support' ] );
 		// add_action( 'widgets_init', [ $this, 'widgets_init' ] );
@@ -131,6 +134,7 @@ class UT_Theme_Helper {
 		wp_enqueue_script( 'ut-main', THEME_URI . '/js/main.js', array('jquery'), date("Ymd"), true );
 		wp_enqueue_script( 'ut-custom', THEME_URI . '/js/custom.js', array('jquery'), date("Ymd"), true );
 
+		wp_enqueue_style( 'ut-font-awesome', '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css' );
 		wp_enqueue_script( 'ut-comments', THEME_URI . '/js/comments.js', array('jquery'), date("Ymd"), true );
 		wp_localize_script( 'ut-comments', 'ut_params', [
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -148,6 +152,17 @@ class UT_Theme_Helper {
 
   	}
 
+	public function load_admin_scripts_n_styles() {
+
+        wp_enqueue_style( 'admin', THEME_URI . '/admin.css' );
+        wp_enqueue_script( 'ut-admin', THEME_URI . '/js/admin.js' );  
+        wp_localize_script('ut-admin', 'ut_admin', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'ajax_nonce' => wp_create_nonce('admin_nonce'),
+            'theme_uri' => THEME_URI,
+        ]);
+    }
+
 	public function import() {
 
   		include_once 'helpers.php';
@@ -155,7 +170,7 @@ class UT_Theme_Helper {
   		include_once 'class.breadcrumbs.php';
   		include_once 'class.home.php';
   		include_once 'course-filter.php';
-
+  		include_once 'class.school-review.php';
   	}
 
 }
