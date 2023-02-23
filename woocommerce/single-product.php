@@ -117,9 +117,12 @@ while ( have_posts() ) :
                             <div class="text_hide short-text">
                                 <?php echo $desc_whoisthecoursefor; ?>
                             </div>
-                            <div class="di-read-more">
-                                <input type="button" value="Читать подробнее">
-                            </div>
+
+                            <?php if ( strlen($desc_whoisthecoursefor) > 585 ) : ?>
+                                <div class="di-read-more">
+                                    <input type="button" value="Читать подробнее">
+                                </div>
+                            <?php endif; ?>
                         
                         </div>
                     <?php endif; ?>
@@ -169,13 +172,16 @@ while ( have_posts() ) :
                             <?php if ( $title_program ) : ?>
                                 <h4><?php echo esc_html($title_program); ?></h4>
                             <?php endif; ?>
-                            
+     
                             <div class="text_hide short-text">
                                 <?php echo $desc_program; ?>
                             </div>
-                            <div class="di-read-more">
-                                <input type="button" value="Читать подробнее">
-                            </div>
+
+                            <?php if ( strlen($desc_program) > 585 ) : ?>
+                                <div class="di-read-more">
+                                    <input type="button" value="Читать подробнее">
+                                </div>
+                            <?php endif; ?>
                             
                         </div>
                     <?php endif; ?>

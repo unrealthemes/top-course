@@ -49,7 +49,7 @@ $url_order_rating = get_permalink() . '?orderby=rating';
 
 <?php if ( $comments ) : ?>
 
-    <div class="otziv">
+    <div id="reviews" class="otziv">
         <h4>Отзывы о курсе</h4>
         
         <form action="" method="GET">

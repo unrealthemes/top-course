@@ -61,7 +61,7 @@ if ( $rating_count > 0 ) :
 			<span>
 				<?php 
 				echo sprintf( 
-					'%s о курсе', 
+					'<a href="#reviews">%s о курсе</a>', 
 					ut_num_decline( 
 						$rating_count, 
 						[ 

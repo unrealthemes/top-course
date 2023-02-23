@@ -695,3 +695,57 @@ body .pk_vizible_flex  { display: flex;}
 
 
 
+
+
+
+
+
+/* new style */
+.home_block .owl-stage,
+.main_reviews .owl-stage {
+    display: flex;
+}
+.home_block .owl-stage .item, 
+.main_reviews .owl-stage .item {
+    height: 100%;
+}
+.home_potborka_item,
+.main_reviews .owl-stage .item .item_block_white {
+    height: 100%;
+}
+.home_block .owl-stage .item .top_list_item, 
+.main_reviews .owl-stage .item .top_list_item {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.home_block .owl-stage .item .top_list_item .item_a, 
+.main_reviews .owl-stage .item .top_list_item .item_a {
+    margin-top: auto;
+}
+
+.main_rating .row_10_di {
+    display: flex;
+}
+.main_rating .row_10_di .col_5_di a {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cd-dropdown-content .menu_btand {
+    display: flex;
+    flex-wrap: wrap;
+}
+.cd-dropdown-content .menu_btand a {
+    /* width: 12% !important; */
+    height: auto;
+    display: flex !important;
+    align-items: center;
+}
+
+.cat_brand.xs_vizible_flex,
+.cat_brand.pk_vizible_flex {
+    padding-top: 10px;
+}

@@ -78,14 +78,17 @@ if ( $show_organization ) :
                 <?php endif; ?> 
 
             </div> 
-        </div>        
-
+        </div>     
+     
         <div class="text_hide short-text">
-            <?php echo esc_html($school->description); ?>
+            <?php echo nl2br($school->description); ?>
         </div>
-        <div class="di-read-more">
-            <input type="button" value="Читать подробнее">
-        </div> 
+
+        <?php if ( strlen($school->description) > 585 ) : ?>
+            <div class="di-read-more">
+                <input type="button" value="Читать подробнее">
+            </div> 
+        <?php endif; ?> 
         
     </div>
 

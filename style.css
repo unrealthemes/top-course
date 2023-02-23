@@ -554,3 +554,7 @@ body .page-breadcrumb ul li .sub-sep {
 .woocommerce .next.page-numbers {
     line-height: 12px;
 }
+
+.cat_coment span a {
+    color: #626467;
+}

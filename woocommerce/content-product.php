@@ -33,7 +33,7 @@ $school = (isset($schools[0])) ? $schools[0] : null;
 $school_img_id = get_field('img_school', $school);
 $school_img_url = wp_get_attachment_image_url( $school_img_id, 'full' ); 
 $school_img_url = ( !$school_img_url ) ? wc_placeholder_img_src() : $school_img_url;
-$school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $school->slug;
+$school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $school->slug . '#reviews';
 $course_link = get_field('link_school', $school);
 $duration_course = get_field('duration_course');
 $start_course = get_field('start_course');
@@ -52,7 +52,7 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 				
 				<?php if ( $school ) : ?>
 					<div class="cat_brand pk_vizible_flex">
-						<a href="<?php echo esc_url($school_link); ?>" target="_blank">
+						<a href="<?php echo esc_url($school_link); ?>">
 							<img src="<?php echo esc_attr($school_img_url); ?>" <?php echo esc_attr($school->name); ?> >
 						</a>
 					</div>
@@ -84,7 +84,7 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 					'rating', 
 					[
 						'class' => 'pk_vizible_flex',
-						'course_link' => $product->get_permalink(),
+						'course_link' => $product->get_permalink() . '#reviews',
 					]
 				); 
 				?> 
@@ -101,7 +101,7 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 					'rating', 
 					[
 						'class' => 'xs_vizible_flex',
-						'course_link' => $product->get_permalink(),
+						'course_link' => $product->get_permalink() . '#reviews',
 					]
 				); 
 				?> 
@@ -110,7 +110,7 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 		
 			<?php if ( $school ) : ?>
 				<div class="cat_brand xs_vizible_flex">
-					<a href="<?php echo esc_url($school_link); ?>" target="_blank">
+					<a href="<?php echo esc_url($school_link); ?>">
 						<img src="<?php echo esc_attr($school_img_url); ?>" <?php echo esc_attr($school->name); ?> >
 					</a>
 				</div>

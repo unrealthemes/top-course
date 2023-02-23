@@ -915,7 +915,7 @@
 .dropdown-is-active span:before {display: none!important;} 
 .go-back a {color: black!important;}
 .clear {clear: both;}
-.cd-dropdown-content .menu_btand a {width: 100px;display: inline-block;padding: 0 10px!important;margin-right: 5px;padding: 5px;background: #FFFFFF;border-radius: 3px;/* margin-bottom: 5px; */}
+.cd-dropdown-content .menu_btand a {width: 100px;display: inline-block;padding: 10px!important;margin-right: 5px;padding: 5px;background: #FFFFFF;border-radius: 3px;/* margin-bottom: 5px; */}
 .cd-dropdown-content .menu_btand a:last-child {margin: 0;}
 .cd-dropdown-content .menu_btand {margin-top: 20px; padding-left: 20px; }
 .cd-dropdown-content .menu_btand a:hover {box-shadow: 0px 4px 6px rgb(73 103 208 / 10%);}

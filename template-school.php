@@ -59,7 +59,7 @@ if ($school) :
                                 <span>
                                     <?php 
                                     echo sprintf( 
-                                        '%s о школе', 
+                                        '<a href="#reviews">%s о школе</a>', 
                                         ut_num_decline( 
                                             $rating_data['count'], 
                                             [ 
@@ -76,7 +76,7 @@ if ($school) :
                     <?php endif; ?> 
 
                     <p><?php echo nl2br($school->description); ?></p>
-                    <h2>Отзывы</h2>
+                    <h2 id="reviews">Отзывы</h2>
 
                     <?php if ( $reviews ) : ?>
 
