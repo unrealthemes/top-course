@@ -1,8 +1,9 @@
 <?php 
-$title = get_field('title_inf_filter', 'option');
-$desc = get_field('desc_inf_filter', 'option');
+$category_obj = $args['category_obj'];
+$title = get_field('title_inf_filter', $category_obj);
+$desc = get_field('desc_inf_filter', $category_obj);
 ?>
-
+ 
 <div class="cat_text">
 
     <?php if ($title) : ?>

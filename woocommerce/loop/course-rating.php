@@ -10,6 +10,7 @@ if ( ! wc_review_ratings_enabled() ) {
 }
 
 $class = $args['class'];
+$course_link = $args['course_link'];
 $rating_count = $product->get_rating_count();
 $review_count = $product->get_review_count();
 $average      = $product->get_average_rating();
@@ -47,8 +48,9 @@ if ( $rating_count > 0 ) :
             <span>
                 <?php 
 				echo sprintf( 
-					'%s о курсе', 
-					ut_num_decline( 
+					'<a href="%s">%s о курсе</a>', 
+                    esc_url($course_link), 
+					ut_num_decline(
 						$rating_count, 
 						[ 
 							'отзыв', 

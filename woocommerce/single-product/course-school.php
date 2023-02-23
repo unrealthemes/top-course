@@ -5,6 +5,7 @@ $term_slug = 'pa_onlajn-platforma';
 $attribute = $product->get_attribute($term_slug);
 $schools = wc_get_product_terms( $product->get_id(), $term_slug, ['fields' => 'all'] );
 $school = (isset($schools[0])) ? $schools[0] : null;
+$school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $school->slug;
 $show_organization = get_field('show_organization');
 $title_organization = get_field('title_organization');
 $img_id = get_field('img_school', $school);
@@ -22,7 +23,9 @@ if ( $show_organization ) :
     <div class="moretext white_block">  
         <div class="row_di review_title">
             <div class="review_l">
-                <img src="<?php echo $img_url; ?>" alt="<?php echo esc_attr($school->name); ?>" >
+                <a href="<?php echo esc_url($school_link); ?>">
+                    <img src="<?php echo $img_url; ?>" alt="<?php echo esc_attr($school->name); ?>" >
+                </a>
             </div>
             <div class="review_r">
                 <div class="review_name"><?php echo esc_html($school->name); ?></div>
@@ -57,7 +60,8 @@ if ( $show_organization ) :
                             <span>
                                 <?php 
                                 echo sprintf( 
-                                    '%s о школе', 
+                                    '<a href="%s">%s о школе</a>', 
+                                    esc_url($school_link),
                                     ut_num_decline( 
                                         $rating_data['count'], 
                                         [ 

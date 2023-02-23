@@ -1,8 +1,9 @@
 <?php 
-$title = get_field('title_rc_filter', 'option');
-$txt_btn = get_field('txt_btn_rc_filter', 'option');
-$link_btn = get_field('link_btn_rc_filter', 'option');
-?>
+$category_obj = $args['category_obj'];
+$title = get_field('title_rc_filter', $category_obj);
+$txt_btn = get_field('txt_btn_rc_filter', $category_obj);
+$link_btn = get_field('link_btn_rc_filter', $category_obj);
+?> 
 
 <div class="di_review">
     
@@ -10,13 +11,13 @@ $link_btn = get_field('link_btn_rc_filter', 'option');
         <h3><?php echo esc_html($title); ?></h3> 
     <?php endif; ?>
 
-    <?php if ( have_rows('reviews_rc_filter', 'option') ): ?>
+    <?php if ( have_rows('reviews_rc_filter', $category_obj) ): ?>
 
         <div class="row_di carousel_v2 rating_schol_carusel"> 
             <div class="di_review_list owl-carousel owl-theme gallery"> 
         
                 <?php 
-                while ( have_rows('reviews_rc_filter', 'option') ): the_row(); 
+                while ( have_rows('reviews_rc_filter', $category_obj) ): the_row(); 
                     $full_name = get_sub_field('fullname_reviews_rc_filter'); 
                     $rating = get_sub_field('rating_reviews_rc_filter'); 
                     $date = get_sub_field('date_reviews_rc_filter'); 

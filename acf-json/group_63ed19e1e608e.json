@@ -47,7 +47,7 @@
             "label": "Школы",
             "name": "schools",
             "aria-label": "",
-            "type": "repeater",
+            "type": "taxonomy",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -56,59 +56,14 @@
                 "class": "",
                 "id": ""
             },
-            "layout": "block",
-            "pagination": 0,
-            "min": 0,
-            "max": 0,
-            "collapsed": "",
-            "button_label": "Добавить школу",
-            "rows_per_page": 20,
-            "sub_fields": [
-                {
-                    "key": "field_63ed1ab39787d",
-                    "label": "Логотип",
-                    "name": "logo_schools",
-                    "aria-label": "",
-                    "type": "image",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "30",
-                        "class": "",
-                        "id": ""
-                    },
-                    "return_format": "url",
-                    "library": "all",
-                    "min_width": "",
-                    "min_height": "",
-                    "min_size": "",
-                    "max_width": "",
-                    "max_height": "",
-                    "max_size": "",
-                    "mime_types": "",
-                    "preview_size": "medium",
-                    "parent_repeater": "field_63ed1a929787c"
-                },
-                {
-                    "key": "field_63ed1add9787e",
-                    "label": "Ссылка",
-                    "name": "link_schools",
-                    "aria-label": "",
-                    "type": "url",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "70",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "parent_repeater": "field_63ed1a929787c"
-                }
-            ]
+            "taxonomy": "pa_onlajn-platforma",
+            "add_term": 0,
+            "save_terms": 0,
+            "load_terms": 0,
+            "return_format": "object",
+            "field_type": "multi_select",
+            "allow_null": 0,
+            "multiple": 0
         },
         {
             "key": "field_63ed1b219787f",
@@ -169,5 +124,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1676552499
+    "modified": 1677139516
 }

@@ -1,8 +1,9 @@
 <?php 
-$title = get_field('title_sr_filter', 'option');
-$schools = get_field('schools_sr_filter', 'option');
+$category_obj = $args['category_obj'];
+$title = get_field('title_sr_filter', $category_obj);
+$schools = get_field('schools_sr_filter', $category_obj);
 ?>
-
+ 
 <div class="rating_schol">
 
     <?php if ($title) : ?>

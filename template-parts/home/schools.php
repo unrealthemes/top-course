@@ -22,6 +22,7 @@ if( !empty($block['align']) ) {
 
 $title = get_field('title_schools');
 $subtitle = get_field('subtitle_schools');
+$schools = get_field('schools');
 $txt_btn = get_field('txt_btn_schools');
 $link_btn = get_field('link_btn_schools');
 ?>
@@ -32,7 +33,7 @@ $link_btn = get_field('link_btn_schools');
         <img src="<?php echo THEME_URI; ?>'/img/gutenberg-preview/schools.png'" alt="Preview" style="width:100%;">
     </figure>
 
-<?php else : ?>
+<?php else : ?> 
 
     <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
         <div class="row_di"> 
@@ -49,21 +50,25 @@ $link_btn = get_field('link_btn_schools');
 
                 </div> 
                 
-                <?php if ( have_rows('schools') ): ?>
+                <?php if ($schools) : ?>
                     <div class="row_di">
                         <div class="row_10_di">
 
                             <?php 
-                            while ( have_rows('schools') ): the_row(); 
-                                $img_url = get_sub_field('logo_schools');
-                                $link = get_sub_field('link_schools');  
+                            foreach ($schools as $school) : 
+                                $school_img_id = get_field('img_school', $school);
+
+                                if ( ! $school_img_id ) continue;
+
+                                $school_img_url = wp_get_attachment_url( $school_img_id ); 
+                                $link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $school->slug;
                             ?>
                                 <div class="col_5_di">
                                     <a href="<?php echo esc_url($link); ?>">
-                                        <img src="<?php echo esc_attr($img_url); ?>" alt="" >
+                                        <img src="<?php echo esc_attr($school_img_url); ?>" alt="<?php echo esc_attr($school->name); ?>">
                                     </a>                       
                                 </div>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
 
                         </div>
                     </div>

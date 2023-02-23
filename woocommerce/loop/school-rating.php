@@ -7,6 +7,7 @@ global $product;
 
 $class = $args['class'];
 $rating_data = $args['rating_data'];
+$school_link = $args['school_link'];
 
 if ( $rating_data['count'] == 0 ) {
     return false;
@@ -27,7 +28,8 @@ if ( $rating_data['count'] == 0 ) {
         <span>
             <?php 
             echo sprintf( 
-                '%s о школе', 
+                '<a href="%s">%s о школе</a>', 
+                esc_url($school_link),
                 ut_num_decline( 
                     $rating_data['count'], 
                     [ 

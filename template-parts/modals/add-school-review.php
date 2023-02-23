@@ -17,7 +17,7 @@ $school = (isset($schools[0])) ? $schools[0] : null;
                     Оставьте свой отзыв 
                 </span>
                 <form action="" method="post" id="school_commentform" class="comment-form">
-                    <input type="text" name="school" value="<?php echo $school->term_id; ?>">
+                    <input type="hidden" name="school" value="<?php echo $school->term_id; ?>">
 
                     <p class="comment-form-author">
                         <label for="school_author">

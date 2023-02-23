@@ -1,9 +1,10 @@
 <?php 
-$title = get_field('title_pc_filter', 'option');
-$desc = get_field('desc_pc_filter', 'option');
-$courses = get_field('courses_pc_filter', 'option');
+$category_obj = $args['category_obj'];
+$title = get_field('title_pc_filter', $category_obj);
+$desc = get_field('desc_pc_filter', $category_obj);
+$courses = get_field('courses_pc_filter', $category_obj);
 ?>
-
+ 
 <div class="popular">
     
     <?php if ($title) : ?>

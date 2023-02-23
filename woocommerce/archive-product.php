@@ -17,6 +17,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+$category_obj = get_queried_object();
+
 get_header();
 
 // $category = get_queried_object();
@@ -134,15 +136,15 @@ get_header();
 					?>
 				</div>	
 				
-				<?php get_template_part('woocommerce/filter/school', 'rating'); ?>
+				<?php get_template_part('woocommerce/filter/school', 'rating', ['category_obj' => $category_obj]); ?>
 
-				<?php get_template_part('woocommerce/filter/collection', 'rating'); ?>
+				<?php get_template_part('woocommerce/filter/collection', 'rating', ['category_obj' => $category_obj]); ?>
 
-				<?php get_template_part('woocommerce/filter/course', 'popular'); ?>
+				<?php get_template_part('woocommerce/filter/course', 'popular', ['category_obj' => $category_obj]); ?>
 
-				<?php get_template_part('woocommerce/filter/course', 'review'); ?>
+				<?php get_template_part('woocommerce/filter/course', 'review', ['category_obj' => $category_obj]); ?>
 
-				<?php get_template_part('woocommerce/filter/info'); ?>
+				<?php get_template_part('woocommerce/filter/info', '', ['category_obj' => $category_obj]); ?>
 				
 			</div>
 		</div>
