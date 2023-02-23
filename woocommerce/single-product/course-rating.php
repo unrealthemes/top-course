@@ -60,7 +60,7 @@ $average      = $product->get_average_rating();
                 $rating_count_item = $product->get_rating_count($i);
                 $average_item = $product->get_average_rating($i);
                 $review_count_item = $product->get_review_count($i);
-                $percent = $rating_count_item / $rating_count * 100;
+                $percent = ($rating_count) ? $rating_count_item / $rating_count * 100 : 0;
             ?>
         
                 <div class="rating_curse_star">

@@ -47,7 +47,7 @@ $categories = get_terms(
 
                             <?php 
                             foreach ( $child_categories as $key => $child_category ) : 
-                                $child_link = get_term_link( (int)$category->term_id, $category->taxonomy );
+                                $child_link = get_term_link( (int)$child_category->term_id, $child_category->taxonomy );
                                 $child_slugs[] = $child_category->slug;
                             ?>
 
@@ -84,7 +84,7 @@ $categories = get_terms(
                                     $school = (isset($schools[0])) ? $schools[0] : null;
 
                                     if ($school) :
-                                        $schools_arr[ $product->get_id() ] = $school;
+                                        $schools_arr[ $school->term_id ] = $school;
                                     endif;
                                 endwhile;
                             endif;
