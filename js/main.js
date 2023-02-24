@@ -102,4 +102,13 @@ $(".cd-dropdown-content").first().show();
 
 	$('nav.prdctfltr-pagination.prdctfltr-pagination-load-more .button').css('with', '100%');
 
+	$('.prdctfltr_rng_price .prdctfltr_regular_title i').removeClass('prdctfltr-down').addClass('prdctfltr-up');
+
+	$('.prdctfltr_wc .prdctfltr_filter').each(function() {
+
+		$(this).find('.prdctfltr_add_scroll').show();
+		$(this).find('.prdctfltr-down').removeClass('prdctfltr-down').addClass('prdctfltr-up');
+
+	});
+
 });

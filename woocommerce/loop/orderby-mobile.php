@@ -36,6 +36,7 @@ $catalog_orderby_options = apply_filters(
 <div class="mobile_short xs_vizible">
    
     <?php foreach ( $catalog_orderby_options as $id => $name ) : ?>
+
         <?php if ($orderby == $id) : ?>
             <a href="#" class="block_button" onclick="return false">
                 <span><?php echo $name; ?></span>
@@ -50,16 +51,34 @@ $catalog_orderby_options = apply_filters(
                     <path d="M1 1.5L8 6.5L15 1.5" stroke="#4967D0" stroke-width="2"/>
                 </svg> 
             </a> 
+        <?php elseif (empty($orderby)) : ?>
+            <a href="#" class="block_button" onclick="return false">
+                <span>Сортировка</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.22266 4.55566H17.0005" stroke="#4967D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9.22266 7.6665H14.6671" stroke="#4967D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9.22266 10.7778H12.3338" stroke="#4967D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3 13.8892L5.33334 16.2225L7.66668 13.8892" stroke="#4967D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5.33301 14.6667V3.77783" stroke="#4967D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg> 
+                <svg width="16" height="8" viewBox="0 0 16 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1.5L8 6.5L15 1.5" stroke="#4967D0" stroke-width="2"/>
+                </svg> 
+            </a> 
+            <?php break; ?>
         <?php endif; ?>
+
     <?php endforeach; ?>
 
     <div class="big white_block">
         <?php foreach ( $catalog_orderby_options as $id => $name ) : ?>
+
             <?php if ($orderby != $id) : ?>
                 <a data-orderby="<?php echo esc_attr( $id ); ?>">
                     <?php echo $name; ?>
                 </a>
             <?php endif; ?>
+
         <?php endforeach; ?>
     </div>
 </div> 
