@@ -7,7 +7,7 @@ global $product;
     <?php if ( get_option( 'woocommerce_review_rating_verification_required' ) === 'no' || wc_customer_bought_product( '', get_current_user_id(), $product->get_id() ) ) : ?>
 
         <div id="review_form_wrapper">
-            <div id="review_form">
+            <div id="review_form"> 
                 <?php
                 $commenter    = wp_get_current_commenter();
                 $comment_form = array(
@@ -64,6 +64,27 @@ global $product;
                 if ( wc_review_ratings_enabled() ) {
                     $comment_form['comment_field'] = '<div class="comment-form-rating">
                                                         <label for="rating">' . esc_html__( 'Your rating', 'woocommerce' ) . ( wc_review_ratings_required() ? '&nbsp;<span class="required">*</span>' : '' ) . '</label>
+                                                        <section class="rating-widget">
+                                                            <div class="rating-stars text-center">
+                                                                <ul id="course_stars">
+                                                                    <li class="star" title="Очень плохо" data-value="1">
+                                                                        <i class="fa fa-star fa-fw"></i>
+                                                                    </li>
+                                                                    <li class="star" title="Неплохо" data-value="2">
+                                                                        <i class="fa fa-star fa-fw"></i>
+                                                                    </li>
+                                                                    <li class="star" title="Средне" data-value="3">
+                                                                        <i class="fa fa-star fa-fw"></i>
+                                                                    </li>
+                                                                    <li class="star" title="Хорошо" data-value="4">
+                                                                        <i class="fa fa-star fa-fw"></i>
+                                                                    </li>
+                                                                    <li class="star" title="Отлично" data-value="5">
+                                                                        <i class="fa fa-star fa-fw"></i>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </section>
                                                         <select name="rating" id="rating" required>
                                                             <option value="">' . esc_html__( 'Rate&hellip;', 'woocommerce' ) . '</option>
                                                             <option value="5">' . esc_html__( 'Perfect', 'woocommerce' ) . '</option>

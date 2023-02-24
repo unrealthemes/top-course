@@ -148,6 +148,24 @@ let COMMENTS = {
             $("#school_rating").val(ratingValue);
             
         });
+        
+        $('#course_stars li').on('click', function(){
+            var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+            var stars = $(this).parent().children('li.star');
+            
+            for (var i = 0; i < stars.length; i++) {
+                $(stars[i]).removeClass('selected');
+            }
+            
+            for (i = 0; i < onStar; i++) {
+                $(stars[i]).addClass('selected');
+            }
+            
+            // JUST RESPONSE (Not needed)
+            var ratingValue = parseInt($('#course_stars li.selected').last().data('value'), 10);
+            $("#rating").val(ratingValue);
+            
+        });
     }
 
 };

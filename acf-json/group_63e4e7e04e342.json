@@ -67,7 +67,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
@@ -76,6 +76,23 @@
             "placeholder": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_63f8b32d13793",
+            "label": "Ссылка на сайт курса",
+            "name": "link_course",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
         },
         {
             "key": "field_63e4f6af015c6",
@@ -471,5 +488,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1676552532
+    "modified": 1677243236
 }

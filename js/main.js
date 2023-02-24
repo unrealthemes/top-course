@@ -106,7 +106,7 @@ $(".cd-dropdown-content").first().show();
 
 	$('.prdctfltr_wc .prdctfltr_filter').each(function() {
 
-		$(this).find('.prdctfltr_add_scroll').show();
+		$(this).find('.prdctfltr_add_scroll').addClass('prdctfltr_down').show();
 		$(this).find('.prdctfltr-down').removeClass('prdctfltr-down').addClass('prdctfltr-up');
 
 	});

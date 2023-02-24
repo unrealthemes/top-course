@@ -17,8 +17,11 @@ if ($school) :
     while (have_posts()) : the_post(); 
         $table = $wpdb->prefix . 'school_comments';
         $rating_data = ut_help()->school_review->get_rating($school->term_id);
-        $reviews = $wpdb->get_results("SELECT * FROM $table WHERE comment_school_ID = $school->term_id AND comment_approved = 1", 'ARRAY_A');
-    ?>
+        $reviews = $wpdb->get_results("SELECT * FROM $table WHERE comment_school_ID = $school->term_id AND comment_approved = 1 ORDER BY comment_date DESC", 'ARRAY_A');
+        $img_id = get_field('img_school', $school);
+        $img_url = wp_get_attachment_image_url( $img_id, 'full' ); 
+        $school_url = get_field('link_school', $school);
+    ?> 
 
         <div class="container_di">
             <div class="row_di">  
@@ -28,6 +31,14 @@ if ($school) :
                             <h1><?php echo esc_html($school->name); ?></h1>
                         </div>
                     </div> 
+
+                    <?php if ( $img_url ) : ?>
+                        <div class="brand_title">
+                            <a href="<?php echo esc_url($school_url); ?>" target="_blank">
+                                <img src="<?php echo esc_attr($img_url); ?>" alt="<?php echo esc_attr($school->name); ?>">
+                            </a>
+                        </div>
+                    <?php endif; ?>
 
                     <?php if ( $rating_data['count'] != 0 ) : ?>
                         <div class="review_rating">

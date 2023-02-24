@@ -34,7 +34,7 @@ $school_img_id = get_field('img_school', $school);
 $school_img_url = wp_get_attachment_image_url( $school_img_id, 'full' ); 
 $school_img_url = ( !$school_img_url ) ? wc_placeholder_img_src() : $school_img_url;
 $school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $school->slug . '#reviews';
-$course_link = get_field('link_school', $school);
+$course_link = get_field('link_course');
 $duration_course = get_field('duration_course');
 $start_course = get_field('start_course');
 $rating_data = ut_help()->school_review->get_rating($school->term_id);
@@ -135,7 +135,9 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 				<div class="cat_item_r_a">
 
 					<?php if ( $course_link ) : ?>
-						<a href="<?php echo esc_url($course_link); ?>" target="_blank" class="btn">На сайт курса</a>
+						<a href="<?php echo esc_url($course_link); ?>" target="_blank" class="btn">
+							На сайт курса
+						</a>
 					<?php endif; ?>
 
 					<a href="<?php echo esc_url($product->get_permalink()); ?>" class="btn_white">Подробнее</a>

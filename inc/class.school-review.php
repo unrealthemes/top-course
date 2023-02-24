@@ -96,9 +96,14 @@ class UT_School_Review {
 
     public function settings_page() {
 
+        global $wpdb;    
+        
+        $table = $wpdb->prefix . 'school_comments';
+        $reviews = $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE comment_approved = 0");
+        $count_not_approved = ($reviews) ? '<span class="awaiting-mod remaining-tasks-badge count-' . $reviews . '">' . $reviews . '</span>' : '';
         add_menu_page( 
             'Отзывы школы', 
-            'Отзывы школы', 
+            'Отзывы школы ' .  $count_not_approved, 
             'edit_posts', 
             'submitted_form_data', 
             [$this, 'submitted_form_data_display'], 
@@ -117,7 +122,7 @@ class UT_School_Review {
         $page = isset( $_GET['cpage'] ) ? abs( (int)$_GET['cpage'] ) : 1;
         $total_page = ceil( $total / $items_per_page );
         $offset = ( $page * $items_per_page ) - $items_per_page;
-        $reviews_data = $wpdb->get_results("SELECT * FROM $table LIMIT $offset, $items_per_page", 'ARRAY_A');
+        $reviews_data = $wpdb->get_results("SELECT * FROM $table ORDER BY comment_date DESC LIMIT $offset, $items_per_page", 'ARRAY_A');
         $pagination_html = $this->get_pagination( $page, $total_page );
 
         get_template_part( 
