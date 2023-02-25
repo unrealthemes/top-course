@@ -1,12 +1,13 @@
 <?php 
-global $product;
-
-$term_slug = 'pa_onlajn-platforma';
-$attribute = $product->get_attribute($term_slug);
-$schools = wc_get_product_terms( $product->get_id(), $term_slug, ['fields' => 'all'] );
-$school = (isset($schools[0])) ? $schools[0] : null;
-
-// $login = ()
+if ( is_singular('product') ) :
+    global $product;
+    $term_slug = 'pa_onlajn-platforma';
+    $attribute = $product->get_attribute($term_slug);
+    $schools = wc_get_product_terms( $product->get_id(), $term_slug, ['fields' => 'all'] );
+    $school = (isset($schools[0])) ? $schools[0] : null;
+else :
+    $school = $args['school'];
+endif;
 ?>
 
 <div class="modal-wrapper" id="add_school_review">

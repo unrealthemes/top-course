@@ -89,6 +89,12 @@ if ($school) :
                     <p><?php echo nl2br($school->description); ?></p>
                     <h2 id="reviews">Отзывы</h2>
 
+                    <?php if ($school) : ?>
+                        <a data-fancybox data-src="#add_school_review" href="javascript:;" class="btn_white" data-school-id="<?php echo $school->term_id; ?>" style="margin-bottom: 20px;">
+                            Оставить отзыв
+                        </a>
+                    <?php endif; ?>
+
                     <?php if ( $reviews ) : ?>
 
                         <div class="school-review-wrapper">
@@ -170,6 +176,8 @@ if ($school) :
                 </div>
             </div>
         </div>
+
+        <?php get_template_part('template-parts/modals/add-school', 'review', ['school' => $school]); ?>
 
     <?php
     endwhile; 

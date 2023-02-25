@@ -571,6 +571,10 @@ p.stars {
     display: none;
 }
 
+.fancybox-close-small:hover {
+    color: #fff !important;
+}
+
 @media only screen and (max-width: 1024px) {
     .admin-bar .cd-dropdown.dropdown-is-active {
         margin-top: 33px;

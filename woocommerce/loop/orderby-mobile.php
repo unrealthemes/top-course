@@ -53,7 +53,7 @@ $catalog_orderby_options = apply_filters(
             </a> 
         <?php elseif (empty($orderby)) : ?>
             <a href="#" class="block_button" onclick="return false">
-                <span>Сортировка</span>
+                <span>По новизне</span>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9.22266 4.55566H17.0005" stroke="#4967D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M9.22266 7.6665H14.6671" stroke="#4967D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
