@@ -22,12 +22,23 @@ $school_img_url = wp_get_attachment_url( $school_img_id );
         </div>
 
         <div class="brand_title">
-            <!-- <a href="<?php // echo esc_url($course_link); ?>" target="_blank">
-                <?php // echo esc_html($school->name); ?>
-            </a> -->
-            <a href="<?php echo ut_get_permalik_by_template('template-school.php') . '?slug=' . $school->slug; ?>">
-                <img src="<?php echo $school_img_url; ?>" alt="<?php echo esc_attr($school->name); ?>" >
-            </a>
+            
+            <?php if ( $schools ) : ?>
+
+                <?php 
+                foreach ( $schools as $_school ) : 
+                    $_school_img_id = get_field('img_school', $_school);
+                    $_school_img_url = wp_get_attachment_image_url( $_school_img_id, 'full' ); 
+                    $_school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $_school->slug . '#reviews';
+                    if (! $school_img_url) continue;
+                ?>
+                    <a href="<?php echo esc_url($_school_link); ?>">
+                        <img src="<?php echo esc_attr($_school_img_url); ?>" <?php echo esc_attr($_school->name); ?> >
+                    </a>
+                <?php endforeach; ?>
+
+            <?php endif; ?>
+
         </div> 
 
         <div class="brand_a">

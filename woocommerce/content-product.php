@@ -49,12 +49,20 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 						<img src="<?php echo $img_url; ?>" alt="<?php echo esc_url($product->get_name()); ?>" >
 					</a>
 				</div>
-				
-				<?php if ( $school ) : ?>
+
+				<?php if ( $schools ) : ?>
 					<div class="cat_brand pk_vizible_flex">
-						<a href="<?php echo esc_url($school_link); ?>">
-							<img src="<?php echo esc_attr($school_img_url); ?>" <?php echo esc_attr($school->name); ?> >
-						</a>
+						<?php 
+						foreach ( $schools as $_school ) : 
+							$_school_img_id = get_field('img_school', $_school);
+							$_school_img_url = wp_get_attachment_image_url( $_school_img_id, 'full' ); 
+							$_school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $_school->slug . '#reviews';
+							if (! $school_img_url) continue;
+						?>
+							<a href="<?php echo esc_url($_school_link); ?>">
+								<img src="<?php echo esc_attr($_school_img_url); ?>" <?php echo esc_attr($_school->name); ?> >
+							</a>
+						<?php endforeach; ?>
 					</div>
 				<?php endif; ?>
 				
@@ -108,11 +116,19 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 				
 			</div>
 		
-			<?php if ( $school ) : ?>
+			<?php if ( $schools ) : ?>
 				<div class="cat_brand xs_vizible_flex">
-					<a href="<?php echo esc_url($school_link); ?>">
-						<img src="<?php echo esc_attr($school_img_url); ?>" <?php echo esc_attr($school->name); ?> >
-					</a>
+					<?php 
+					foreach ( $schools as $_school ) : 
+						$_school_img_id = get_field('img_school', $_school);
+						$_school_img_url = wp_get_attachment_image_url( $_school_img_id, 'full' ); 
+						$_school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $_school->slug . '#reviews';
+						if (! $school_img_url) continue;
+					?>
+						<a href="<?php echo esc_url($_school_link); ?>">
+							<img src="<?php echo esc_attr($_school_img_url); ?>" <?php echo esc_attr($_school->name); ?> >
+						</a>
+					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
 	

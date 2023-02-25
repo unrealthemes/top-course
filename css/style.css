@@ -600,8 +600,8 @@ body .ui-slider-horizontal .ui-slider-handle {top: -6px;margin-left: 0;}
 /* brand */
 .brand {margin-bottom: 30px;}
 .brand_img {}
-.brand_title {margin-bottom: 0px;}
-.brand_title a {padding: 24px 0;font-size: 29px;text-align: center;display: block;color: #0B0B0B;}
+.brand_title {margin-bottom: 0px;padding: 24px 0;}
+.brand_title a {padding: 5px;font-size: 29px;text-align: center;display: block;color: #0B0B0B;}
 .brand_a a {display: block;margin-bottom: 14px;}
 .curs_page_sidebar_soc {text-align: center;}
 .white_block_title {font-weight: 500;font-size: 16px; margin-bottom: 20px;color: #212529;}
@@ -657,8 +657,8 @@ body .ui-slider-horizontal .ui-slider-handle {top: -6px;margin-left: 0;}
 .text_hide {  overflow: hidden;  position: relative; }
 .text_hide:before {background: linear-gradient(180deg,#fff0,#f8f8f8 90%);bottom: 0;content: "";display: block;height: 50px;left: 0;position: absolute;right: 0;}
 .full-text:before {display: none!important; content: ;}
-.short-text {overflow: hidden;height: 76px;position: relative;font-size: 16px;}
-.full-text{ height: auto;}
+.short-text {overflow: hidden;height: 95px;position: relative;font-size: 16px;}
+.full-text{ height: auto !important;}
 .di-read-more {margin-top: 10px; position: relative; display: flex;}
 .di-read-more input {margin: 0;background-image: url(../img/arrow_niz.svg);background-repeat: no-repeat;background-position: center right;padding: 0 25px 0 0;width: auto;background-color: transparent;font-weight: 500!important;font-size: 16px;color: #4967D0;line-height: 1;}
 .di-read-more input:hover {opacity: 0.6; cursor: pointer;}
@@ -689,8 +689,8 @@ body .pk_vizible { display: block;}
 .header_nav .login {display: none;}
 .item_title_icon img {width: 40px!important;max-width:inherit!important;}
 .f_logo a svg {min-height: 26px;max-width: 155px;}
-body .xs_vizible_flex { display: none;}
-body .pk_vizible_flex  { display: flex;}
+body .xs_vizible_flex { display: none;align-items: center;}
+body .pk_vizible_flex  { display: flex;align-items: center;}
 .sidebar_btn, .header_menu2_close {display: none;}
 
 
