@@ -32,9 +32,11 @@ $school_img_url = wp_get_attachment_url( $school_img_id );
                     $_school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $_school->slug . '#reviews';
                     if (! $school_img_url) continue;
                 ?>
-                    <a href="<?php echo esc_url($_school_link); ?>">
-                        <img src="<?php echo esc_attr($_school_img_url); ?>" <?php echo esc_attr($_school->name); ?> >
-                    </a>
+                    <div class="brand_schools_logo">
+                        <a href="<?php echo esc_url($_school_link); ?>">
+                            <img src="<?php echo esc_attr($_school_img_url); ?>" alt="<?php echo esc_attr($_school->name); ?>">
+                        </a>
+                    </div>
                 <?php endforeach; ?>
 
             <?php endif; ?>
@@ -50,7 +52,7 @@ $school_img_url = wp_get_attachment_url( $school_img_id );
             <?php endif; ?>
 
             <?php if ($school) : ?>
-                <a data-fancybox data-src="#add_school_review" href="javascript:;" class="btn_white" data-school-id="<?php echo $school->term_id; ?>">
+                <a data-fancybox data-src="#add_school_review" href="javascript:;" class="btn_white f-modal" data-school-id="<?php echo $school->term_id; ?>">
                     Оставить отзыв
                 </a>
             <?php endif; ?>

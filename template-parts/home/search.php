@@ -41,7 +41,7 @@ $counts = ut_help()->home->count_objects();
                 <div class="block_title">
                     
                     <?php if ($title) : ?>
-                        <h2><?php echo esc_html($title); ?></h2>
+                        <h1><?php echo esc_html($title); ?></h1>
                     <?php endif; ?>
 
                     <?php if ($subtitle) : ?>

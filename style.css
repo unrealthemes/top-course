@@ -575,6 +575,11 @@ p.stars {
     color: #fff !important;
 }
 
+#course_stars li:hover,
+#stars li:hover {
+    cursor: pointer;
+}
+
 @media only screen and (max-width: 1024px) {
     .admin-bar .cd-dropdown.dropdown-is-active {
         margin-top: 33px;

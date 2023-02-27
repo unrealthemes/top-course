@@ -18,15 +18,17 @@ $redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "ht
         <table id="submitted_form_data" class="wp-list-table widefat fixed striped table-view-list posts">
             <thead>
                 <tr>
-                    <th><input id="sf_all" type="checkbox"></th>
-                    <th>school_ID</th>
-                    <th>author</th>
-                    <th>author email</th>
-                    <th>date</th>
-                    <th>content</th>
-                    <th>rating</th>
-                    <th>approved</th>
-                    <th>button</th>
+                    <th style="min-width: 28px;">
+                        <input id="sf_all" type="checkbox" style="padding:0px;">
+                    </th>
+                    <th>Школа</th>
+                    <th>Имя</th>
+                    <th>Почта</th>
+                    <th>Дата</th>
+                    <th>Контент</th>
+                    <th>Рейтинг</th>
+                    <th>Одобренный</th>
+                    <th>Кнопка</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,6 +59,40 @@ $redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "ht
 	                                <td class="table-item">
                                         <?php echo stripcslashes($value); ?>
                                         <span class="modal-open"></span>
+                                    </td>
+                                
+                                <?php 
+                                elseif ( $key == 'comment_school_ID' ) : 
+                                    $tax_name = 'pa_onlajn-platforma';
+                                    $school = get_term($value, $tax_name);
+                                ?>
+
+	                                <td class="table-item">
+                                        <?php echo esc_html($school->name); ?>
+                                    </td>
+                                
+                                <?php elseif ( $key == 'comment_rating' ) : ?>
+
+	                                <td class="table-item rating">
+                                        <div class="rating">                                
+                                            <svg class="none" width="0" height="0" xmlns="http://www.w3.org/2000/svg">
+                                                <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="star">
+                                                    <path d="M31.547 12a.848.848 0 00-.677-.577l-9.427-1.376-4.224-8.532a.847.847 0 00-1.516 0l-4.218 8.534-9.427 1.355a.847.847 0 00-.467 1.467l6.823 6.664-1.612 9.375a.847.847 0 001.23.893l8.428-4.434 8.432 4.432a.847.847 0 001.229-.894l-1.615-9.373 6.822-6.665a.845.845 0 00.214-.869z"></path>
+                                                </symbol>
+                                            </svg>                                             
+                                            <div class="c-rate">
+                                                
+                                                <?php 
+                                                for ($y = 1; $y <= 5; $y++) : 
+                                                    $class = ( $y <= round($value) ) ? ' diactive' : '';
+                                                ?>
+                                                    <svg class="c-icon<?php echo esc_attr($class); ?>" width="20" height="20">
+                                                        <use xlink:href="#star"></use>
+                                                    </svg>
+                                                <?php endfor; ?>
+
+                                            </div>  
+                                        </div>
                                     </td>
 
                                 <?php else : ?>

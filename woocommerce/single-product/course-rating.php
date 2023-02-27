@@ -95,7 +95,7 @@ $average      = $product->get_average_rating();
   
             <?php endfor; ?>
             
-            <a data-fancybox data-src="#add_review" href="javascript:;" class="btn">
+            <a data-fancybox data-src="#add_review" href="javascript:;" class="btn f-modal">
                 Оставить отзыв
             </a>
 
