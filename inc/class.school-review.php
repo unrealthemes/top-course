@@ -101,7 +101,8 @@ class UT_School_Review {
         $table = $wpdb->prefix . 'school_comments';
         $reviews = $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE comment_approved = 0");
         $count_not_approved = ($reviews) ? '<span class="awaiting-mod remaining-tasks-badge count-' . $reviews . '">' . $reviews . '</span>' : '';
-        add_menu_page( 
+        add_submenu_page( 
+            'edit.php?post_type=product',
             'Отзывы школы', 
             'Отзывы школы ' .  $count_not_approved, 
             'edit_posts', 

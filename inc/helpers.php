@@ -87,8 +87,13 @@ add_filter('admin_footer_text', 'ut_remove_footer_admin');
  */ 
 
 if ( function_exists('acf_add_options_page') ) {
-	acf_add_options_page();
+	acf_add_options_page([
+		'page_title'    => __('Настройки темы'),
+		'menu_title'    => __('Настройки темы'),
+		'menu_slug'     => 'acf-options',
+	]);
 }
+// add_filter('acf/settings/show_admin', '__return_false');
 
 
 

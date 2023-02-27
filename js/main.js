@@ -1,8 +1,10 @@
 jQuery(document).ready(function($){
 
-	$('.f-modal').fancybox({
-		touch : false,
-	});
+	if ( $('.f-modal').length ) {
+		$('.f-modal').fancybox({
+			touch : false,
+		});
+	}
 	
 	$(document).on('click', '.sub-sep', function(event){
 		event.preventDefault();

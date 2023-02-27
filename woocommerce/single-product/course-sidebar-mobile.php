@@ -84,11 +84,9 @@ $school_img_url = wp_get_attachment_url( $school_img_id );
                     $_school_link = ut_get_permalik_by_template('template-school.php') . '?slug=' . $_school->slug . '#reviews';
                     if (! $school_img_url) continue;
                 ?>
-                    <div class="brand_schools_logo">
-                        <a href="<?php echo esc_url($_school_link); ?>">
-                            <img src="<?php echo esc_attr($_school_img_url); ?>" <?php echo esc_attr($_school->name); ?> >
-                        </a>
-                    </div> 
+                    <a href="<?php echo esc_url($_school_link); ?>">
+                        <img src="<?php echo esc_attr($_school_img_url); ?>" alt="<?php echo esc_attr($_school->name); ?>">
+                    </a>
                 <?php endforeach; ?>
 
             <?php endif; ?>
