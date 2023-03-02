@@ -65,6 +65,13 @@ get_header();
 			<div class="col_2_di sidebar">
 				<div class="di_accordeon">
 					<div id="accordion-js" class="accordion"> 
+						<a class="header_menu2_close">
+							<span>Закрыть</span>
+							<svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M1 1.69678L11.6066 12.3034" stroke="#4967D0" stroke-width="2"></path>
+								<path d="M11.6064 1.69678L0.999844 12.3034" stroke="#4967D0" stroke-width="2"></path>
+							</svg>
+						</a>
 
 						<?php do_action( 'ut_main_filter_options' ); ?>
 
