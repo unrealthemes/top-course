@@ -30,8 +30,6 @@ while ( have_posts() ) :
     $main_title_skills = get_field('main_title_skills');
     $title_skills = get_field('title_skills');
     $skills = get_field('skills');
-    $title_certificates = get_field('title_certificates');
-    $certificates = get_field('certificates');
     $title_program = get_field('title_program');
     $desc_program = get_field('desc_program');
     $duration_course = get_field('duration_course');
@@ -96,14 +94,21 @@ while ( have_posts() ) :
                         </div>
                     <?php endif; ?>
 
-                    <div class="price">
-                        <?php echo wc_price($product->get_price()); ?>
+                    <?php if ( $product->get_price() != 0 ) : ?>
+                        <div class="price">
+                            <?php echo wc_price($product->get_price()); ?>
 
-                        <?php if ( $installment_plan_main ) : ?>
-                            <span>Есть рассрочка</span>
-                        <?php endif; ?>
+                            <?php if ( $installment_plan_main ) : ?>
+                                <span>Есть рассрочка</span>
+                            <?php endif; ?>
 
-                    </div>
+                        </div>
+                    <?php else : ?>
+                        <div class="price">
+                            бесплатно
+                            <span>Нет рассрочки</span>
+                        </div>
+                    <?php endif; ?>
          
                     <?php if ( $desc_whoisthecoursefor ) : ?>
                         <div class="text-container">
@@ -162,12 +167,12 @@ while ( have_posts() ) :
 
                     </div>
 
-                    <?php get_template_part('woocommerce/single-product/certificates', null, ['certificates' => $certificates]); ?>
+                    <?php get_template_part('woocommerce/single-product/certificate', null, []); ?>
 
                     <?php get_template_part('woocommerce/single-product/course', 'school', []); ?> 
          
                     <?php if ( $desc_program ) : ?>
-                        <div class="text-container">
+                        <div class="text-container course-programm">
 
                             <?php if ( $title_program ) : ?>
                                 <h4><?php echo esc_html($title_program); ?></h4>

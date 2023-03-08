@@ -5,7 +5,7 @@ $term_slug = 'pa_onlajn-platforma';
 $attribute = $product->get_attribute($term_slug);
 $schools = wc_get_product_terms( $product->get_id(), $term_slug, ['fields' => 'all'] );
 $show_organization = get_field('show_organization');
-$title_organization = get_field('title_organization');
+$title_organization = get_field('title_organization', $product->get_id());
 
 if ( $show_organization ) : 
 ?>

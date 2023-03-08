@@ -1,5 +1,8 @@
 <?php
 
+ini_set('max_execution_time', '6000'); //10 часов
+set_time_limit(0);
+
 class UT_Parser {
 
     private static $_instance = null; 
@@ -15,7 +18,7 @@ class UT_Parser {
     public function __construct() {
 
         // add_action( 'after_setup_theme', [$this, 'insert_scholls_attribute'] );
-
+        // add_action( 'admin_menu', [$this, 'settings_page'] );
 
         //prevents html from being stripped from term descriptions 
         // foreach ( array( 'pre_term_description' ) as $filter ) {
@@ -29,102 +32,167 @@ class UT_Parser {
 
     }
 
-    public function insert_courses() {
+    public function settings_page() {
+
+        add_submenu_page( 
+            'edit.php?post_type=product',
+            'Парсер', 
+            'Парсер', 
+            'edit_posts', 
+            'parser_data', 
+            [$this, 'data_display'], 
+            '', 
+            124
+        );
+    }
+
+    public function data_display() {
+
+        $page = isset( $_GET['parser_page'] ) ? abs( (int)$_GET['parser_page'] ) : 0;
+        $status = ( isset( $_GET['parser'] ) && $_GET['parser'] == 1 ) ? true : false;
+
+        echo '<h1>Парсер</h1>';
+        echo '<a class="button button-primary" href="' . home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser_page=1&parser=1">Start</a>';
+
+        if ( $status && $page != 0 ) {
+            $this->insert_courses($page);
+        }
+    }
+
+    public function insert_courses($page) {
 
         require_once THEME_DIR . '/lib/phpQuery/phpQuery.php';
-        $courses_url = 'https://adminagregator.obrazoval.ru/api/courses?with[0]=image&with[1]=owners&with[2]=compilations&perPage=1&sort=sort-asc';
+        $courses_url = 'https://adminagregator.obrazoval.ru/api/courses?with[0]=image&with[1]=owners&with[2]=compilations&perPage=20&page=' . $page . '&sort=sort-asc';
         $courses = $this->get_data_by_url($courses_url);
         $tax_school_name = 'pa_onlajn-platforma';
         $tax_category_name = 'product_cat';
 
+        error_log(print_r(count($courses['data']), true));
+        error_log(print_r($page, true));
+        error_log(print_r('============================', true));
+        
+        if ( count($courses['data']) == 0 ) {
+            wp_redirect( home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser=0' );
+            exit();
+        }
+
         if (isset($courses['data'])) {
+            
             foreach ($courses['data'] as $course) {
+
+                if ( metadata_exists( 'product', $course['id'], '_product_id' ) ) {
+                    continue;
+                }
 
                 $course_url = 'https://obrazoval.ru/courses/' . $course['slug'];
                 $doc = phpQuery::newDocument(file_get_contents($course_url));
 
-                // $product = new WC_Product_Simple();
-                // $product->set_name( $course['title'] ); 
-                // $product->set_slug( $course['slug'] );
-                // $product->set_regular_price( $course['price'] ); 
-                // $product->set_short_description( $course['summary'] );
-                // $product->set_stock_status( 'instock' );
+                $product = new WC_Product_Simple();
+                $product->set_name( $course['title'] ); 
+                $product->set_slug( $course['slug'] );
+                $product->set_regular_price( $course['price'] ); 
+                $product->set_short_description( $course['summary'] );
+                $product->set_stock_status( 'instock' );
             
                 // save category
-                // if ($course['section']) {
-                //     $category = get_term_by( 'name', $course['section'], $tax_category_name );
-                //     $cat_ids = ( $category->parent != 0 ) ? [ $category->term_id, $category->parent ] : [ $category->term_id ];
-                //     $product->set_category_ids( $cat_ids );
-                // }
+                if ($course['section']) {
+                    $category = get_term_by( 'name', $course['section'], $tax_category_name );
+                    $cat_ids = ( $category->parent != 0 ) ? [ $category->term_id, $category->parent ] : [ $category->term_id ];
+                    $product->set_category_ids( $cat_ids );
+                }
 
                 // save media
-                // $img_id = $this->upload_file_by_url( $course['image'] );
-                // $product->set_image_id( $img_id );
+                $img_id = $this->upload_file_by_url( $course['image'] );
+                $product->set_image_id( $img_id );
 
                 // save schools
-                // if ($course['owners']) {
-                //     foreach ($course['owners'] as $owner) {
-                //         if ( term_exists( $owner['slug'], $tax_school_name ) ) { // Проверяем, существует ли такоe значение в указанном атрибуте
-                //             $term_id = get_term_by( 'slug', $owner['slug'], $tax_school_name )->term_id;
-                //             $this->set_attr_product( $product, $tax_school_name, $term_id );
-                //         }
-                //     }
-                // }
+                if ($course['owners']) {
+                    foreach ($course['owners'] as $owner) {
+                        if ( term_exists( $owner['slug'], $tax_school_name ) ) { // Проверяем, существует ли такоe значение в указанном атрибуте
+                            $term_id = get_term_by( 'slug', $owner['slug'], $tax_school_name )->term_id;
+                            $this->set_attr_product( $product, $tax_school_name, $term_id );
+                        }
+                    }
+                }
 
                 // save attributes
-                // $attr_name = null;
-                // $attrs = $doc->find('.l-features.b-bordered--no-hover')->children();
-                // foreach ($attrs as $attr) {
-                //     $pq_attr = pq($attr);
-                //     $label_attr = $pq_attr->find('.l-features__title');
-                //     $value_attr = $pq_attr->find('.l-features__value');
-                //     $label = trim($label_attr->text());
-                //     $value = trim($value_attr->text());
+                $attr_name = null;
+                $attrs = $doc->find('.l-features.b-bordered--no-hover')->children();
+                foreach ($attrs as $attr) {
+                    $pq_attr = pq($attr);
+                    $label_attr = $pq_attr->find('.l-features__title');
+                    $value_attr = $pq_attr->find('.l-features__value');
+                    $label = trim($label_attr->text());
+                    $value = trim($value_attr->text());
 
-                //     if ( $label == 'Сложность' ) {
-                //         $attr_name = 'pa_slozhnost'; 
-                //     } elseif ( $label == 'Тип обучения' ) {
-                //         $attr_name = 'pa_tip-obucheniya'; 
-                //     } elseif ( $label == 'Формат обучения' ) {
-                //         $attr_name = 'pa_format-obucheniya'; 
-                //     } elseif ( $label == 'Трудоустройство' ) {
-                //         $attr_name = 'pa_trudoustrojstvo'; 
-                //     } elseif ( $label == 'Сертификат' ) {
-                //         $attr_name = 'pa_sertifikat'; 
-                //     } else {
-                //         continue;
-                //     }
+                    if ( $label == 'Сложность' ) {
+                        $attr_name = 'pa_slozhnost'; 
+                    } elseif ( $label == 'Тип обучения' ) {
+                        $attr_name = 'pa_tip-obucheniya'; 
+                    } elseif ( $label == 'Формат обучения' ) {
+                        $attr_name = 'pa_format-obucheniya'; 
+                    } elseif ( $label == 'Трудоустройство' ) {
+                        $attr_name = 'pa_trudoustrojstvo'; 
+                    } elseif ( $label == 'Сертификат' ) {
+                        $attr_name = 'pa_sertifikat'; 
+                    } else {
+                        continue;
+                    }
 
-                //     $term = get_term_by( 'name', $value, $attr_name );
-                //     if ( ! $term ) {
-                //         $term = wp_insert_term( $value, $attr_name, [] );
-                //         $term_id = $term['term_id'];
-                //     } else {
-                //         $term_id = $term->term_id;
-                //     }
-                //     $this->set_attr_product( $product, $attr_name, $term_id );
-                // }
+                    $term = get_term_by( 'name', $value, $attr_name );
+                    if ( ! $term ) {
+                        $term = wp_insert_term( $value, $attr_name, [] );
+                        $term_id = $term['term_id'];
+                    } else {
+                        $term_id = $term->term_id;
+                    }
+                    $this->set_attr_product( $product, $attr_name, $term_id );
+                }
+
+                $product->save();
 
                 // save descriptions
-                $desc_1 = $doc->find('.b-title__large .show-hide__content')->html();
+                $desc_1 = $doc->find('.show-hide.b-title__large.q-mt-xs .show-hide__content')->html();
+                $desc_2 = $doc->find('.b-title__course.q-mb-sm')->parent()->find('.show-hide__content.hidden-blur')->html();
+                update_field( 'desc_whoisthecoursefor', $desc_1, $product->get_id() );
+                update_field( 'desc_program', $desc_2, $product->get_id() );
+                // // $certificate = $doc->find('.l-skills-doc .q-img')->html(); // ->attr('src');
 
+                // save skills
+                $skills = $doc->find('.l-skills__items')->children(); 
+                if (! empty($skills)) {
+                    foreach ($skills as $skill) {
+                        $pq_skill = pq($skill);
+                        $label_skill = $pq_skill->find('.l-skills__item-name')->text();
+                        if (! empty($label_skill)) {
+                            add_row('skills', ['txt_skills' => $label_skill], $product->get_id());
+                        }
+                    }
+                }
 
-                echo '<pre>';
-                print_r( $desc_1 );
-                echo '</pre>';
-                
-                echo '<pre>';
-                print_r( $course['title'] );
-                echo '</pre>';
+                // save installment
+                $installment = $doc->find('.l-course__installment')->text();
+                if (! empty($installment)) {
+                    update_field( 'installment_plan_main', true, $product->get_id() );
+                }
 
-                // $product->save();
-
-                // update_post_meta($product->get_id(), '_product_id', $course['id']);
-                // update_field( 'duration_course', $course['duration']. ',', $product->get_id() );
-                // update_field( 'start_course', $course['startedAt'], $product->get_id() );
-                // update_field( 'link_course', $course['externalUrl'], $product->get_id() );
+                update_post_meta($product->get_id(), '_product_id', $course['id']);
+                update_field( 'duration_course', $course['duration']. ',', $product->get_id() );
+                update_field( 'start_course', $course['startedAt'], $product->get_id() );
+                update_field( 'link_course', $course['externalUrl'], $product->get_id() );
+                update_field( 'show_organization', true, $product->get_id() );
+                update_field( 'title_price', 'Стоимость курса', $product->get_id() );
+                update_field( 'title_whoisthecoursefor', 'Кому подойдёт этот курс', $product->get_id() );
+                update_field( 'title_organization', 'Образовательная организация', $product->get_id() );
+                update_field( 'main_title_skills', 'Что вы получите после обучения', $product->get_id() );
+                update_field( 'title_skills', 'Приобретаемые навыки', $product->get_id() );
+                update_field( 'title_program', 'Программа курса', $product->get_id() );
 
             }
+
+            $page++;
+            wp_redirect( home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser_page=' . $page . '&parser=1' );
+            exit();
         }
     }
 
