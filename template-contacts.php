@@ -12,6 +12,18 @@ $mail = get_field('mail_contacts');
 $txt_mail = get_field('txt_mail_contacts');
 $soc_network = get_field('soc_network_contacts');
 $ymap = get_field('ymap_contacts');
+
+// $args = array(
+//     'post_type' => 'product',
+//     'posts_per_page' => -1
+//     );
+// $loop = new WP_Query( $args );
+// if ( $loop->have_posts() ) {
+//     while ( $loop->have_posts() ) : $loop->the_post();
+//         ut_help()->parser->delete_product($product->get_id(), TRUE);
+//     endwhile;
+// } 
+// wp_reset_postdata();
 ?>
 
     <div class="container_di">

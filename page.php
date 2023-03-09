@@ -12,8 +12,6 @@
  * @package unreal-themes
  */
 
-ut_help()->parser->insert_courses();
-
 get_header();
 
 while ( have_posts() ) :

@@ -595,11 +595,14 @@ p.stars {
     cursor: pointer;
 }
 
-..school-content p span,
+.course-maindesc p span,
+.school-content p span,
 .short-text p span {
     background-color: #f8f8f8!important;
 } 
 
+.course-maindesc ul,
+.course-maindesc ol,
 .school-content ul,
 .school-content ol,
 .course-programm ul,
@@ -615,26 +618,35 @@ p.stars {
     margin-bottom: 20px;
 }
 
+.course-maindesc ol,
 .school-content ul,
 .school-content ol {
     padding-inline-start: 15px;
 }
 
+.course-maindesc ul {
+    padding-inline-start: 20px;
+}
+
+.course-maindesc ul,
 .school-content ul,
 .course-programm ul {
     list-style: initial;
 }
 
+.course-maindesc ol li,
 .school-content ol li,
 .course-programm ol li {
     list-style: decimal;
 }
 
+.course-maindesc ol li:before,
 .school-content ol li:before,
 .course-programm ol li:before {
     content: none;
 }
 
+.course-maindesc ol li::before,
 .school-content ol li::before,
 .course-programm ol li::before {
     unicode-bidi: isolate;

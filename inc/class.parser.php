@@ -18,7 +18,10 @@ class UT_Parser {
     public function __construct() {
 
         // add_action( 'after_setup_theme', [$this, 'insert_scholls_attribute'] );
-        // add_action( 'admin_menu', [$this, 'settings_page'] );
+        add_action( 'admin_menu', [$this, 'settings_page'] );
+
+        // Automatically Delete Woocommerce Images After Deleting a Product
+        // add_action( 'before_delete_post', [$this, 'delete_product_images'], 10, 1 );
 
         //prevents html from being stripped from term descriptions 
         // foreach ( array( 'pre_term_description' ) as $filter ) {
@@ -30,6 +33,28 @@ class UT_Parser {
         //     remove_filter( $filter, 'wp_kses_data' );
         // }
 
+    }
+
+    public function delete_product_images( $post_id ) {
+
+        $product = wc_get_product( $post_id );
+
+        if ( !$product ) {
+            return;
+        }
+
+        $featured_image_id = $product->get_image_id();
+        $image_galleries_id = $product->get_gallery_image_ids();
+
+        if ( !empty( $featured_image_id ) ) {
+            wp_delete_post( $featured_image_id );
+        }
+
+        if ( !empty( $image_galleries_id ) ) {
+            foreach ( $image_galleries_id as $single_image_id ) {
+                wp_delete_post( $single_image_id );
+            }
+        }
     }
 
     public function settings_page() {
@@ -61,13 +86,15 @@ class UT_Parser {
 
     public function insert_courses($page) {
 
+        global $wpdb;
+
         require_once THEME_DIR . '/lib/phpQuery/phpQuery.php';
         $courses_url = 'https://adminagregator.obrazoval.ru/api/courses?with[0]=image&with[1]=owners&with[2]=compilations&perPage=20&page=' . $page . '&sort=sort-asc';
         $courses = $this->get_data_by_url($courses_url);
         $tax_school_name = 'pa_onlajn-platforma';
         $tax_category_name = 'product_cat';
 
-        error_log(print_r(count($courses['data']), true));
+        // error_log(print_r(count($courses['data']), true));
         error_log(print_r($page, true));
         error_log(print_r('============================', true));
         
@@ -80,7 +107,10 @@ class UT_Parser {
             
             foreach ($courses['data'] as $course) {
 
-                if ( metadata_exists( 'product', $course['id'], '_product_id' ) ) {
+                $courser_id = $course['id'];
+                $duplicate = $wpdb->get_row("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_course_id' AND meta_value = $courser_id", ARRAY_A);
+
+                if ( $duplicate ) {
                     continue;
                 }
 
@@ -102,8 +132,8 @@ class UT_Parser {
                 }
 
                 // save media
-                $img_id = $this->upload_file_by_url( $course['image'] );
-                $product->set_image_id( $img_id );
+                // $img_id = $this->upload_file_by_url( $course['image'] );
+                // $product->set_image_id( $img_id );
 
                 // save schools
                 if ($course['owners']) {
@@ -176,8 +206,8 @@ class UT_Parser {
                     update_field( 'installment_plan_main', true, $product->get_id() );
                 }
 
-                update_post_meta($product->get_id(), '_product_id', $course['id']);
-                update_field( 'duration_course', $course['duration']. ',', $product->get_id() );
+                update_post_meta($product->get_id(), '_course_thumbnail_src', $course['image']);
+                update_post_meta($product->get_id(), '_course_id', $course['id']);
                 update_field( 'start_course', $course['startedAt'], $product->get_id() );
                 update_field( 'link_course', $course['externalUrl'], $product->get_id() );
                 update_field( 'show_organization', true, $product->get_id() );
@@ -188,6 +218,11 @@ class UT_Parser {
                 update_field( 'title_skills', 'Приобретаемые навыки', $product->get_id() );
                 update_field( 'title_program', 'Программа курса', $product->get_id() );
 
+                if ($course['duration']) {
+                    update_field( 'duration_course', $course['duration']. ',', $product->get_id() );
+                } else {
+                    update_field( 'duration_course', '', $product->get_id() );
+                }
             }
 
             $page++;
@@ -347,4 +382,61 @@ class UT_Parser {
 
         return json_decode($result, true);
 	}
+
+    /**
+    * Method to delete Woo Product
+    * 
+    * @param int $id the product ID.
+    * @param bool $force true to permanently delete product, false to move to trash.
+    * @return \WP_Error|boolean
+    */
+   public function delete_product($id, $force = FALSE) {
+
+        $product = wc_get_product($id);
+    
+        if(empty($product))
+            return new WP_Error(999, sprintf(__('No %s is associated with #%d', 'woocommerce'), 'product', $id));
+    
+        // If we're forcing, then delete permanently.
+        if ($force)
+        {
+            if ($product->is_type('variable'))
+            {
+                foreach ($product->get_children() as $child_id)
+                {
+                    $child = wc_get_product($child_id);
+                    $child->delete(true);
+                }
+            }
+            elseif ($product->is_type('grouped'))
+            {
+                foreach ($product->get_children() as $child_id)
+                {
+                    $child = wc_get_product($child_id);
+                    $child->set_parent_id(0);
+                    $child->save();
+                }
+            }
+    
+            $product->delete(true);
+            $result = $product->get_id() > 0 ? false : true;
+        }
+        else
+        {
+            $product->delete();
+            $result = 'trash' === $product->get_status();
+        }
+    
+        if (!$result)
+        {
+            return new WP_Error(999, sprintf(__('This %s cannot be deleted', 'woocommerce'), 'product'));
+        }
+    
+        // Delete parent product transients.
+        if ($parent_id = wp_get_post_parent_id($id))
+        {
+            wc_delete_product_transients($parent_id);
+        }
+        return true;
+    }
 } 

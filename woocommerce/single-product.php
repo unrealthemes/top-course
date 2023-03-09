@@ -119,7 +119,7 @@ while ( have_posts() ) :
                                 </h4>
                             <?php endif; ?>
 
-                            <div class="text_hide short-text">
+                            <div class="text_hide short-text course-maindesc">
                                 <?php echo $desc_whoisthecoursefor; ?>
                             </div>
 
