@@ -19,6 +19,7 @@ class UT_Theme_Helper {
 	public $home;
 	public $course_filter;
 	public $school_review;
+	public $parser;
 
 	private function __construct() {
 
@@ -56,6 +57,7 @@ class UT_Theme_Helper {
 		$this->home = UT_Home::get_instance();
 		$this->course_filter = UT_Course_Filter::get_instance();
 		$this->school_review = UT_School_Review::get_instance();
+		$this->parser = UT_Parser::get_instance();
 	}
 
 	/**
@@ -171,6 +173,7 @@ class UT_Theme_Helper {
   		include_once 'class.home.php';
   		include_once 'course-filter.php';
   		include_once 'class.school-review.php';
+  		include_once 'class.parser.php';
   	}
 
 }

@@ -547,11 +547,26 @@ body .page-breadcrumb ul li .sub-sep {
 .woocommerce nav.woocommerce-pagination ul li a {
     display: inline-block;
     text-align: center;
-    width: 30px;
+    min-width: 30px;
     height: 30px;
     border-radius: 3px;
     border: 2px solid #4967d0;
     font-weight: 600;
+}
+
+.prdctfltr_wc_regular.prdctfltr_wc.prdctfltr_woocommerce.prdctfltr_scroll_default .prdctfltr_terms_customized_select .prdctfltr_add_scroll .prdctfltr_checkboxes, 
+.prdctfltr_wc.prdctfltr_woocommerce.pf_select.prdctfltr_scroll_default .prdctfltr_add_scroll .prdctfltr_checkboxes {
+    overflow: overlay;
+    max-height: 195px;
+}
+
+body .xs_vizible_flex a img,
+body .pk_vizible_flex a img {
+    width: 100%;
+}
+
+.brand_img {
+    text-align: center;
 }
 
 .woocommerce .prev.page-numbers,
@@ -578,6 +593,75 @@ p.stars {
 #course_stars li:hover,
 #stars li:hover {
     cursor: pointer;
+}
+
+.course-maindesc p span,
+.school-content p span,
+.short-text p span {
+    background-color: #f8f8f8!important;
+} 
+
+.course-maindesc ul,
+.course-maindesc ol,
+.school-content ul,
+.school-content ol,
+.course-programm ul,
+.course-programm ol {
+    counter-reset: unset;
+    display: block;
+    list-style-type: decimal;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 25px;
+    margin-bottom: 20px;
+}
+
+.course-maindesc ol,
+.school-content ul,
+.school-content ol {
+    padding-inline-start: 15px;
+}
+
+.course-maindesc ul {
+    padding-inline-start: 20px;
+}
+
+.course-maindesc ul,
+.school-content ul,
+.course-programm ul {
+    list-style: initial;
+}
+
+.course-maindesc ol li,
+.school-content ol li,
+.course-programm ol li {
+    list-style: decimal;
+}
+
+.course-maindesc ol li:before,
+.school-content ol li:before,
+.course-programm ol li:before {
+    content: none;
+}
+
+.course-maindesc ol li::before,
+.school-content ol li::before,
+.course-programm ol li::before {
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+    text-transform: none;
+    text-indent: 0px !important;
+    text-align: start !important;
+    text-align-last: start !important;
+}
+
+.school-content ul br,
+.school-content > br,
+.short-text ul br,
+.short-text > br {
+    display: none;
 }
 
 @media only screen and (max-width: 1024px) {

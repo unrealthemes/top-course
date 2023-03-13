@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 global $product;
 
 // Ensure visibility.
-if ( empty( $product ) /*|| ! $product->is_visible()*/ ) {
+if ( empty( $product ) || ! $product->is_visible() ) {
 	return;
 }
 
@@ -60,7 +60,7 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 							if (! $school_img_url) continue;
 						?>
 							<a href="<?php echo esc_url($_school_link); ?>">
-								<img src="<?php echo esc_attr($_school_img_url); ?>" <?php echo esc_attr($_school->name); ?> >
+								<img src="<?php echo esc_attr($_school_img_url); ?>" alt="<?php echo esc_attr($_school->name); ?>">
 							</a>
 						<?php endforeach; ?>
 					</div>
@@ -126,7 +126,7 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 						if (! $school_img_url) continue;
 					?>
 						<a href="<?php echo esc_url($_school_link); ?>">
-							<img src="<?php echo esc_attr($_school_img_url); ?>" <?php echo esc_attr($_school->name); ?> >
+							<img src="<?php echo esc_attr($_school_img_url); ?>" alt="<?php echo esc_attr($_school->name); ?>">
 						</a>
 					<?php endforeach; ?>
 				</div>
@@ -146,7 +146,12 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 			
 			<div class="cat_item_r">
 				<div class="price">
-					<?php echo wc_price($product->get_price()); ?>
+
+					<?php if ( $product->get_price() != 0 ) : ?>
+						<?php echo wc_price($product->get_price()); ?>
+					<?php else : ?>
+                        бесплатно
+                    <?php endif; ?>
 				</div>
 				<div class="cat_item_r_a">
 

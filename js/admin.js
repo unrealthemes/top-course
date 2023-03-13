@@ -104,4 +104,47 @@ jQuery(function($) {
            e.target.parentElement.parentElement.remove();
        }
     });
+
+
+    $('body').on('click', '.edit-review-js', function (e) {
+        e.preventDefault();
+        $('.modale').addClass('opened');
+        var review_id = $(this).data('comment-id');
+        var review_content = $(this).parents('tr').find('td .content').html();
+        $('#form_edit_review input[name="comment_ID"]').val(review_id);
+        $('#form_edit_review textarea[name="comment_content"]').val(review_content.trim());
+    });
+
+    $('.closemodale').click(function (e) {
+        e.preventDefault();
+        $('.modale').removeClass('opened');
+    });
+
+    $('#form_edit_review').submit( function (event) {
+        event.preventDefault();
+        $('#message').hide();
+        $('.save-edit-review-js').prop('disabled', true);
+        var review_id = $('#form_edit_review input[name="comment_ID"]').val();
+        var review_content = $('#form_edit_review textarea[name="comment_content"]').val();
+        var data = {
+            action : 'edit_review',
+            ajax_nonce : ut_admin.ajax_nonce,
+            form : $(this).serialize(),
+        };
+        $.ajax({
+            type : 'POST',
+            url  : ut_admin.ajax_url,
+            data : data,
+            success: function(response) {
+                $('#message').html(response.data.message).show();
+                $('.save-edit-review-js').prop('disabled', false);
+                $('#form_edit_review')[0].reset();
+                setTimeout(function () {
+                    $('#submitted_form_data tr[data-comment-id="' + review_id + '"] td .content').html(review_content);
+                    $('.modale').removeClass('opened');
+                }, 2000);
+            }
+        });
+    });
+
 });

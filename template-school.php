@@ -86,7 +86,10 @@ if ($school) :
                         </div> 
                     <?php endif; ?> 
 
-                    <p><?php echo nl2br($school->description); ?></p>
+                    <div class="school-content">
+                        <?php echo nl2br($school->description); ?>
+                    </div>
+
                     <h2 id="reviews">Отзывы</h2>
 
                     <?php if ($school) : ?>
