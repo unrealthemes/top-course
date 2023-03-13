@@ -16,6 +16,7 @@ class UT_Course_Filter {
 
         add_filter( 'woocommerce_catalog_orderby', [$this, 'rename_sorting_option_woocommerce_shop'] );
         // add_filter( 'pre_get_posts', [$this, 'per_page'] );
+        add_filter( 'loop_shop_per_page', [$this, 'loop_shop_per_page'], 10 );
 
         remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 30 );
         remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
@@ -24,7 +25,10 @@ class UT_Course_Filter {
         add_filter('woocommerce_default_catalog_orderby', [$this, 'custom_default_catalog_orderby'] );
     }
 
-    
+    function loop_shop_per_page( $products ) {
+        $products = 20;
+        return $products;
+       }    
 
     function custom_default_catalog_orderby() {
         return 'date'; // Can also use title and price

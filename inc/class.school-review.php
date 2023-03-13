@@ -23,6 +23,9 @@ class UT_School_Review {
 
             add_action( 'wp_ajax_confirm_user_data', [$this, 'confirm_user_data'] );
             add_action( 'wp_ajax_nopriv_confirm_user_data', [$this, 'confirm_user_data'] );
+            
+            add_action( 'wp_ajax_edit_review', [$this, 'edit_review'] );
+            add_action( 'wp_ajax_nopriv_edit_review', [$this, 'edit_review'] );
         }
     }
 
@@ -164,6 +167,33 @@ class UT_School_Review {
         );
 
         wp_send_json_success();
+    }
+
+    public function edit_review() {
+
+        global $wpdb;
+
+        check_ajax_referer( 'admin_nonce', 'ajax_nonce' );
+        parse_str( $_POST['form'], $form );
+
+        if ( ! $form['comment_content'] ) {
+            wp_send_json_error( [
+                'message' => 'Не может быть пустым!',
+            ] );
+        }
+
+        // update review
+        $table = $wpdb->prefix . 'school_comments';
+        $wpdb->update( 
+            $table,
+            [ 'comment_content' => $form['comment_content'] ],
+            [ 'comment_ID' => $form['comment_ID'] ]
+        );
+
+        wp_send_json_success([
+            'message' => 'Отзыв успешно изменён.',
+        ]);
+
     }
 
     function get_pagination( $page, $total_page ) {

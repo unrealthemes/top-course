@@ -108,9 +108,9 @@ $txt_menu = get_field('txt_menu_header', 'option');
                                 ] );
                             }
                             ?>
-                            <div class="login">
+                            <!-- <div class="login">
                                 <a href="" class="btn_white">Войти</a>
-                            </div>
+                            </div> -->
                         </nav>
                     </div>      
                     

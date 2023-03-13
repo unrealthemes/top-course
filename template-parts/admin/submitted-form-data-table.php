@@ -28,7 +28,7 @@ $redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "ht
                     <th>Контент</th>
                     <th>Рейтинг</th>
                     <th>Одобренный</th>
-                    <th>Кнопка</th>
+                    <th>Кнопки</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,7 +37,7 @@ $redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "ht
 
                     <?php foreach ( $reviews as $key => $review ) : ?>
 
-                        <tr>
+                        <tr data-comment-id="<?php echo esc_attr($review['comment_ID']); ?>">
                             <td>
                                 <input id="sf_<?php echo $review['comment_ID'] ?>" 
                                     type="checkbox" 
@@ -57,7 +57,9 @@ $redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "ht
                                 <?php if ( $key == 'comment_content' ) : ?>
 
 	                                <td class="table-item">
-                                        <?php echo stripcslashes($value); ?>
+                                        <div class="content">
+                                            <?php echo stripcslashes($value); ?>
+                                        </div>
                                         <span class="modal-open"></span>
                                     </td>
                                 
@@ -113,6 +115,13 @@ $redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "ht
                                         Одобрить
                                     </button>
                                 <?php endif; ?>
+
+                                <button type="button"
+                                        class="button button-primary edit-review-js"
+                                        data-comment-id="<?php echo esc_attr($review['comment_ID']); ?>">
+                                    Редактировать
+                                </button>
+
                             </td>
 
                         </tr>
@@ -128,3 +137,5 @@ $redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "ht
 
     </form>
 </div>
+
+<?php get_template_part('template-parts/modals/edit-review'); ?>
