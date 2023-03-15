@@ -1,5 +1,21 @@
 jQuery(document).ready(function($){
 
+	function getUrlParameter(sParam) {
+		var sPageURL = window.location.search.substring(1),
+			sURLVariables = sPageURL.split('&'),
+			sParameterName,
+			i;
+	
+		for (i = 0; i < sURLVariables.length; i++) {
+			sParameterName = sURLVariables[i].split('=');
+	
+			if (sParameterName[0] === sParam) {
+				return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+			}
+		}
+		return false;
+	}
+
 	if ( $('.f-modal').length ) {
 		$('.f-modal').fancybox({
 			touch : false,
@@ -115,6 +131,25 @@ $(".cd-dropdown-content").first().show();
 		$(this).find('.prdctfltr_add_scroll').addClass('prdctfltr_down').show();
 		$(this).find('.prdctfltr-down').removeClass('prdctfltr-down').addClass('prdctfltr-up');
 
+	});
+
+	//
+	if ( getUrlParameter('zero') ) {
+		var checked = 'checked';
+	} else {
+		var checked = '';
+	}
+	$('.prdctfltr_rng_price .prdctfltr_add_scroll').after('<div class="filter_input"><input id="zero_price" type="checkbox" name="zero_price" ' + checked + ' data-zero="' + ut_main.zero_url + '" data-max="' + ut_main.full_url + '"><label for="zero_price"><span></span><div class="label_name">Только бесплатные</div></label></div>');
+
+	$(document).on('click', 'label[for="zero_price"]', function() { 
+
+		if ( $('#zero_price').prop('checked') == false ) {
+			$('#zero_price').prop('checked', true);
+			window.location.href = $('#zero_price').data('zero');
+		} else {
+			$('#zero_price').prop('checked', false);
+			window.location.href = $('#zero_price').data('max');
+		}
 	});
 
 });

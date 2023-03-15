@@ -134,6 +134,27 @@ class UT_Theme_Helper {
 		wp_enqueue_script( 'ut-owl-carousel', THEME_URI . '/js/owl.carousel.min.js', array('jquery'), date("Ymd"), true );
 		wp_enqueue_script( 'ut-jquery-menu-aim', THEME_URI . '/js/jquery.menu-aim.js', array('jquery'), date("Ymd"), true );
 		wp_enqueue_script( 'ut-main', THEME_URI . '/js/main.js', array('jquery'), date("Ymd"), true );
+		// min
+		$uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+		$query = $_GET;
+		$query['rng_min_price'] = 0;
+		$query['rng_max_price'] = 0.1;
+		$query['zero'] = 1;
+		$query_result = http_build_query($query);
+		$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $uri_parts[0] . '?' . $query_result;
+		// max
+		unset($query['rng_min_price']);
+		unset($query['rng_max_price']);
+		unset($query['zero']);
+		$query_result = http_build_query($query);
+		$full_actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $uri_parts[0] . '?' . $query_result;
+
+		wp_localize_script( 'ut-main', 'ut_main', [
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+			'ajax_nonce' => wp_create_nonce('ut_check'),
+			'zero_url' => $actual_link,
+			'full_url' => $full_actual_link,
+		] );
 		wp_enqueue_script( 'ut-custom', THEME_URI . '/js/custom.js', array('jquery'), date("Ymd"), true );
 
 		wp_enqueue_style( 'ut-font-awesome', '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css' );
