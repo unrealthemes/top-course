@@ -8,6 +8,8 @@ class UT_Parser {
     private static $_instance = null; 
 
     private $limit_courses = 20;
+    private $limit_reviews = 20;
+    private $chatgpt_key = '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';
 
     static public function get_instance() {
 
@@ -24,6 +26,7 @@ class UT_Parser {
 
         // wp cron for update table Gepha api products
         add_action( 'gepha_update_woo_products', [$this, 'insert_courses'], 10, 1 );
+        add_action( 'gepha_insert_product_reviews', [$this, 'insert_course_reviews'], 10, 1 );
 
         // Automatically Delete Woocommerce Images After Deleting a Product
         // add_action( 'before_delete_post', [$this, 'delete_product_images'], 10, 1 );
@@ -82,14 +85,31 @@ class UT_Parser {
 
         $page = isset( $_GET['parser_page'] ) ? abs( (int)$_GET['parser_page'] ) : 0;
         $status = ( isset( $_GET['parser'] ) && $_GET['parser'] == 1 ) ? true : false;
+        $type = $_GET['type'] ?? false;
 
         echo '<h1>Парсер</h1>';
-        echo '<a class="button button-primary" href="' . home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser=1&parser_page=1">Старт</a>';
+        echo '<a class="button button-primary" href="' . home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser=1&parser_page=1&type=courses">Парсинг КУРСОВ</a> <br><br>';
+        echo '<a class="button button-primary" href="' . home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser=1&parser_page=1&type=course-reviews">Парсинг ОТЗЫВОВ КУРСОВ</a> <br><br>';
+        echo '<a class="button button-primary" href="' . home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser=1&parser_page=1&type=school-reviews">Парсинг ОТЗЫВОВ ШКОЛ</a> <br><br>';
 
-        if ( $status && $page == 1 ) {
-            // $this->insert_courses($page);   
+        if ( $status && $page == 1 && $type == 'courses' ) {
             $this->set_shedule_update_woo_products( 1 );
+        } elseif ( $status && $page == 1 && $type == 'course-reviews' ) {
+            $this->set_shedule_insert_product_reviews($page);
+        } elseif ( $status && $page == 1 && $type == 'school-reviews' ) {
+            // $this->insert_school_reviews($page); 
+            // $this->set_shedule_insert_school_reviews($page);
         }
+    }
+
+    public function insert_school_reviews($page) {
+
+
+
+
+        echo '<pre>';
+        print_r(  );
+        echo '</pre>';
     }
 
     public function insert_courses($page) {
@@ -247,6 +267,250 @@ class UT_Parser {
         // start next iteration
         $this->set_shedule_update_woo_products($page);
     }
+    
+    public function insert_course_reviews($page) {
+
+        $start = microtime(true);
+        global $wpdb;
+
+        $reviews_url = 'https://adminagregator.obrazoval.ru/api/reviews?perPage=' . $this->limit_reviews . '&page=' . $page . '&filter[only_course_reviews]=true&with[0]=content&with[1]=reviewable';
+        $reviews = $this->get_data_by_url($reviews_url);
+
+        error_log(print_r('COUNT = ' . count($reviews['data']), true));
+        error_log(print_r('PAGE = ' . $page, true));
+        
+        if ( ! count($reviews['data']) ) {
+            error_log(print_r('CLEAR CRON', true));
+            wp_clear_scheduled_hook( 'gepha_insert_product_reviews', [$page-1] );
+            wp_clear_scheduled_hook( 'gepha_insert_product_reviews', [$page] );
+            wp_clear_scheduled_hook( 'gepha_insert_product_reviews' );
+
+            return false;
+        }
+            
+        foreach ($reviews['data'] as $review) {
+
+            $review_id = $review['id'];
+            $reviewableId = $review['reviewableId'];
+            $duplicate = $wpdb->get_row("SELECT comment_id FROM $wpdb->commentmeta WHERE meta_key = '_review_id' AND meta_value = $review_id", ARRAY_A);
+
+            if ( $duplicate ) {
+                continue;
+            }
+
+            $course_data = $wpdb->get_row("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_course_id' AND meta_value = $reviewableId", ARRAY_A);
+
+            if ( ! $course_data ) {
+                continue;
+            }
+
+            $content = $this->rerate_review($review['content']);
+            $content = ( empty($content) ) ? $review['content'] : $content;
+            $data = [
+                'comment_post_ID' => $course_data['post_id'],
+                'comment_author' => $review['author'],
+                'comment_author_email' => '',
+                'comment_content' => $content,
+                'comment_date' => $review['date'],
+                'comment_approved' => 1,
+            ];
+            $comment_id = wp_insert_comment( wp_slash($data) );
+            update_comment_meta( $comment_id, 'rating', intval($review['rate']) );
+            update_comment_meta( $comment_id, '_review_id', $comment_id );
+
+        }
+
+        $page++;
+        $time = microtime(true) - $start; 
+
+        error_log(print_r($time, true)); 
+        error_log(print_r('============================', true));
+
+        // start next iteration
+        $this->set_shedule_insert_product_reviews($page);
+    }
+
+    // public function insert_reviews($course_id) {
+
+        // $start = microtime(true);
+        // global $wpdb;
+
+        // require_once THEME_DIR . '/lib/phpQuery/phpQuery.php';
+        // $course_url = 'https://obrazoval.ru/courses/kak-stat-inzhenerom-po-testirovaniyu-2';
+        // $doc = phpQuery::newDocument( file_get_contents($course_url) );
+        // $doc->find('#reviews button')->bind('click', 'submitHandler')->trigger('click');
+        // $reviews = $doc->find('.course-reviews__list')->children();
+
+        // if (! empty($reviews)) {
+        //     echo '<pre>';
+        //     print_r( count($reviews) );
+        //     echo '</pre>';
+        //     foreach ($reviews as $review) {
+        //         $pq_review = pq($review);
+        //         $review_url = $pq_review->find('.reviews-card-header__info .reviews-card-header__author-name')->attr('href');
+        //         $full_name = $pq_review->find('.reviews-card-header__info .reviews-card-header__author-name')->text();
+        //         $date = $pq_review->find('.reviews-card-header__info .reviews-card-header__date span')->text();
+                // description
+                // $doc_desc = phpQuery::newDocument( file_get_contents('https://obrazoval.ru' . $review_url) );
+                // $desc = $doc_desc->find('.reviews-show__review .reviews-card__description')->html();
+                // $rerate_desc = $this->rerate_review($desc);
+
+                // $data = [
+                //     'comment_post_ID' => $course_id,
+                //     'comment_author' => $full_name,
+                //     'comment_author_email' => '',
+                //     'comment_content' => $desc,
+                //     'comment_approved' => 1,
+                // ];
+                // $comment_id = wp_insert_comment( wp_slash($data) );
+                // update_comment_meta( $course_id, '_id_url', $review_url );
+                
+                // echo '<pre style="background-color: red;color:#fff;">';
+                // print_r( $rerate_desc );
+                // echo '</pre>';      
+            // }
+        // }
+
+        // if ( ! count($courses['data']) ) {
+        //     error_log(print_r('CLEAR CRON', true));
+        //     wp_clear_scheduled_hook( 'gepha_update_woo_products', [$page-1] );
+        //     wp_clear_scheduled_hook( 'gepha_update_woo_products', [$page] );
+        //     wp_clear_scheduled_hook( 'gepha_update_woo_products' );
+
+        //     return false;
+        // }
+        
+        /*
+        foreach ($courses['data'] as $course) {
+
+            $courser_id = $course['id'];
+            $duplicate = $wpdb->get_row("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_course_id' AND meta_value = $courser_id", ARRAY_A);
+
+            if ( $duplicate ) {
+                continue;
+            }
+
+            $course_url = 'https://obrazoval.ru/courses/' . $course['slug'];
+            $doc = phpQuery::newDocument(file_get_contents($course_url));
+
+            $product = new WC_Product_Simple();
+            $product->set_name( $course['title'] ); 
+            $product->set_slug( $course['slug'] );
+            $product->set_regular_price( $course['price'] ); 
+            $product->set_short_description( $course['summary'] );
+            $product->set_stock_status( 'instock' );
+        
+            // save category
+            if ($course['section']) {
+                $category = get_term_by( 'name', $course['section'], $tax_category_name );
+                $cat_ids = ( $category->parent != 0 ) ? [ $category->term_id, $category->parent ] : [ $category->term_id ];
+                $product->set_category_ids( $cat_ids );
+            }
+
+            // save media
+            $img_id = $this->upload_file_by_url( $course['image'] );
+            $product->set_image_id( $img_id );
+
+            // save schools
+            if ($course['owners']) {
+                foreach ($course['owners'] as $owner) {
+                    if ( term_exists( $owner['slug'], $tax_school_name ) ) { // Проверяем, существует ли такоe значение в указанном атрибуте
+                        $term_id = get_term_by( 'slug', $owner['slug'], $tax_school_name )->term_id;
+                        $this->set_attr_product( $product, $tax_school_name, $term_id );
+                    }
+                }
+            }
+
+            // save attributes
+            $attr_name = null;
+            $attrs = $doc->find('.l-features.b-bordered--no-hover')->children();
+            foreach ($attrs as $attr) {
+                $pq_attr = pq($attr);
+                $label_attr = $pq_attr->find('.l-features__title');
+                $value_attr = $pq_attr->find('.l-features__value');
+                $label = trim($label_attr->text());
+                $value = trim($value_attr->text());
+
+                if ( $label == 'Сложность' ) {
+                    $attr_name = 'pa_slozhnost'; 
+                } elseif ( $label == 'Тип обучения' ) {
+                    $attr_name = 'pa_tip-obucheniya'; 
+                } elseif ( $label == 'Формат обучения' ) {
+                    $attr_name = 'pa_format-obucheniya'; 
+                } elseif ( $label == 'Трудоустройство' ) {
+                    $attr_name = 'pa_trudoustrojstvo'; 
+                } elseif ( $label == 'Сертификат' ) {
+                    $attr_name = 'pa_sertifikat'; 
+                } else {
+                    continue;
+                }
+
+                $term = get_term_by( 'name', $value, $attr_name );
+                if ( ! $term ) {
+                    $term = wp_insert_term( $value, $attr_name, [] );
+                    $term_id = $term['term_id'];
+                } else {
+                    $term_id = $term->term_id;
+                }
+                $this->set_attr_product( $product, $attr_name, $term_id );
+            }
+
+            $product->save();
+
+            // save descriptions
+            $desc_1 = $doc->find('.show-hide.b-title__large.q-mt-xs .show-hide__content')->html();
+            $desc_2 = $doc->find('.b-title__course.q-mb-sm')->parent()->find('.show-hide__content.hidden-blur')->html();
+            update_field( 'desc_whoisthecoursefor', $desc_1, $product->get_id() );
+            update_field( 'desc_program', $desc_2, $product->get_id() );
+            // // $certificate = $doc->find('.l-skills-doc .q-img')->html(); // ->attr('src');
+
+            // save skills
+            $skills = $doc->find('.l-skills__items')->children(); 
+            if (! empty($skills)) {
+                foreach ($skills as $skill) {
+                    $pq_skill = pq($skill);
+                    $label_skill = $pq_skill->find('.l-skills__item-name')->text();
+                    if (! empty($label_skill)) {
+                        add_row('skills', ['txt_skills' => $label_skill], $product->get_id());
+                    }
+                }
+            }
+
+            // save installment
+            $installment = $doc->find('.l-course__installment')->text();
+            if (! empty($installment)) {
+                update_field( 'installment_plan_main', true, $product->get_id() );
+            }
+
+            // update_post_meta($product->get_id(), '_course_thumbnail_src', $course['image']);
+            update_post_meta($product->get_id(), '_course_id', $course['id']);
+            update_field( 'start_course', $course['startedAt'], $product->get_id() );
+            update_field( 'link_course', $course['externalUrl'], $product->get_id() );
+            update_field( 'show_organization', true, $product->get_id() );
+            update_field( 'title_price', 'Стоимость курса', $product->get_id() );
+            update_field( 'title_whoisthecoursefor', 'Кому подойдёт этот курс', $product->get_id() );
+            update_field( 'title_organization', 'Образовательная организация', $product->get_id() );
+            update_field( 'main_title_skills', 'Что вы получите после обучения', $product->get_id() );
+            update_field( 'title_skills', 'Приобретаемые навыки', $product->get_id() );
+            update_field( 'title_program', 'Программа курса', $product->get_id() );
+
+            if ($course['duration']) {
+                update_field( 'duration_course', $course['duration']. ',', $product->get_id() );
+            } else {
+                update_field( 'duration_course', '', $product->get_id() );
+            }
+        }*/
+
+        // wp_redirect( home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser_page=' . $page . '&parser=1' );
+        // exit();
+
+        // $time = microtime(true) - $start; 
+        // error_log(print_r($time, true)); 
+        // error_log(print_r('============================', true));
+
+        // start next iteration
+        // $this->set_shedule_update_woo_products($page);
+    // }
 
     public function set_attr_product( $product, $taxonomy, $term_id ) {
 
@@ -468,6 +732,18 @@ class UT_Parser {
         wp_clear_scheduled_hook( 'gepha_update_woo_products', [$page] );
         wp_schedule_event( $time, $interval, 'gepha_update_woo_products', [$page]);
     }
+    
+    public function set_shedule_insert_product_reviews($page) {
+
+        // date_default_timezone_set('Asia/Tbilisi');
+        date_default_timezone_set('UTC');
+        $interval = 'every_15_minutes';
+        $time = time();
+        // remove shadule event for create new shedule with another interval
+        wp_clear_scheduled_hook( 'gepha_insert_product_reviews', [$page-1] );
+        wp_clear_scheduled_hook( 'gepha_insert_product_reviews', [$page] );
+        wp_schedule_event( $time, $interval, 'gepha_insert_product_reviews', [$page]);
+    }
 
     public function add_cron_recurrence_interval( $schedules ) {
 
@@ -517,6 +793,34 @@ class UT_Parser {
         ];
          
         return $schedules;
+    }
+
+    public function rerate_review($zapyt) {
+
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $this->chatgpt_key . ''
+        ];
+        $data = [
+            'model' => 'text-davinci-003',
+            'prompt' => $zapyt,
+            'max_tokens' => 1024,
+            'temperature' => 0.8
+        ];
+        $ch = curl_init("https://api.openai.com/v1/completions");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        if (curl_error($ch)) {
+            $generate_txt = '';
+        } else {
+            $response = json_decode(curl_exec($ch), true);
+            $generate_txt = $response['choices'][0]['text']; // тут буде відповідь від ChatGPT
+        }
+        curl_close($ch);
+
+        return $generate_txt;
     }
     
 } 
