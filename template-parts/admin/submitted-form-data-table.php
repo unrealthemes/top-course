@@ -49,7 +49,7 @@ $redirect_url = ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "ht
                             <?php 
                             foreach ( $review as $key => $value ) : 
                                 
-                                if ( $key == 'comment_ID' || $key == 'comment_date_gmt' || $key == 'user_id' ) :
+                                if ( $key == 'comment_ID' || $key == 'comment_date_gmt' || $key == 'user_id' || $key == 'rewrite' ) :
                                     continue;
                                 endif;
                             ?>

@@ -8,6 +8,9 @@ class UT_Parser {
     private static $_instance = null; 
 
     private $limit_courses = 20;
+    private $limit_reviews = 10;
+    // private $chatgpt_key = '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';
+    private $chatgpt_key = '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';
 
     static public function get_instance() {
 
@@ -24,6 +27,10 @@ class UT_Parser {
 
         // wp cron for update table Gepha api products
         add_action( 'gepha_update_woo_products', [$this, 'insert_courses'], 10, 1 );
+        add_action( 'gepha_insert_product_reviews', [$this, 'insert_course_reviews'], 10, 1 );
+        add_action( 'gepha_insert_school_reviews', [$this, 'insert_school_reviews'], 10, 1 );
+        add_action( 'gepha_insert_rewrite_school_reviews', [$this, 'insert_rewrite_school_reviews'], 10, 1 );
+        add_action( 'gepha_insert_rewrite_course_reviews', [$this, 'insert_rewrite_course_reviews'], 10, 1 );
 
         // Automatically Delete Woocommerce Images After Deleting a Product
         // add_action( 'before_delete_post', [$this, 'delete_product_images'], 10, 1 );
@@ -40,6 +47,7 @@ class UT_Parser {
 
         // add custom interval
         add_filter( 'cron_schedules', [$this, 'add_cron_recurrence_interval'] );
+
     }
 
     public function delete_product_images( $post_id ) {
@@ -62,6 +70,7 @@ class UT_Parser {
                 wp_delete_post( $single_image_id );
             }
         }
+
     }
 
     public function settings_page() {
@@ -73,7 +82,7 @@ class UT_Parser {
             'edit_posts', 
             'parser_data', 
             [$this, 'data_display'], 
-            '', 
+            20, 
             124
         );
     }
@@ -82,19 +91,233 @@ class UT_Parser {
 
         $page = isset( $_GET['parser_page'] ) ? abs( (int)$_GET['parser_page'] ) : 0;
         $status = ( isset( $_GET['parser'] ) && $_GET['parser'] == 1 ) ? true : false;
+        $type = $_GET['type'] ?? false;
 
-        echo '<h1>Парсер</h1>';
-        echo '<a class="button button-primary" href="' . home_url() . '/wp-admin/edit.php?post_type=product&page=parser_data&parser=1&parser_page=1">Старт</a>';
+        get_template_part('template-parts/admin/parser-data-table');
 
-        if ( $status && $page == 1 ) {
-            // $this->insert_courses($page);   
-            $this->set_shedule_update_woo_products( 1 );
+        // if ( $status && $page == 1 && $type == 'courses' ) {
+        //     $this->set_shedule_update_woo_products( 1 );
+        // } elseif ( $status && $page == 1 && $type == 'course-reviews' ) {
+        //     $this->set_shedule_insert_product_reviews($page);
+        // } elseif ( $status && $page == 1 && $type == 'school-reviews' ) {
+        //     $this->set_shedule_insert_school_reviews($page);
+        // } elseif ( $status && $page == 1 && $type == 'rewrite-course-reviews' ) {
+        //     $this->set_shedule_insert_rewrite_course_reviews($page);
+        // } elseif ( $status && $page == 1 && $type == 'rewrite-school-reviews' ) {
+        //     $this->set_shedule_insert_rewrite_school_reviews($page);
+        // }
+
+    }
+
+    public function insert_rewrite_school_reviews($page) {
+
+        global $wpdb;   
+        $start = microtime(true);
+        update_option( 'parser_status_school_views', true ); 
+
+        $table = $wpdb->prefix . 'school_comments';
+        $items_per_page = 5;
+        $offset = ( $page * $items_per_page ) - $items_per_page;
+        $reviews = $wpdb->get_results("SELECT * FROM $table WHERE rewrite != 1 OR rewrite IS NULL ORDER BY comment_date DESC LIMIT $offset, $items_per_page", 'ARRAY_A');
+        // $wpdb->query("ALTER TABLE $table ADD rewrite BOOLEAN after comment_approved");
+
+        if ( ! $reviews ) {
+            $time = microtime(true) - $start; 
+            error_log(print_r('CLEAR CRON', true));
+            wp_clear_scheduled_hook( 'gepha_insert_rewrite_school_reviews', [$page-1] );
+            wp_clear_scheduled_hook( 'gepha_insert_rewrite_school_reviews', [$page] );
+            wp_clear_scheduled_hook( 'gepha_insert_rewrite_school_reviews' );
+            update_option( 'parser_status_school_views', false );
+            
+            return false;
         }
+
+        $page++;
+        foreach ( $reviews as $review ) {
+            $content = strip_tags($review['comment_content']);
+            $content = str_replace(["\r\n", "\r", "\n", "'"], '', $content);
+            $content = mb_strimwidth($content, 0, 150, ''); // substr($content, 0, 300);
+            $prompt[] = 'rewrite this text in Russian no more than 250 characters: "' . $content . '"';
+        }
+
+        if ( $prompt ) {
+            $result = $this->rewrite_review($prompt);   
+
+            if ( $result ) {
+                foreach ( $reviews as $key => $review ) {
+                    $text = $result[ $key ]->text;  
+                    $wpdb->update( 
+                        $table,
+                        [ 
+                            'comment_content' => $text,
+                            'rewrite' => 1 
+                        ],
+                        [ 'comment_ID' => $review['comment_ID'] ]
+                    );
+                }
+            } 
+        } 
+
+        $time = microtime(true) - $start; 
+        error_log(print_r(count($reviews), true)); 
+        error_log(print_r($time, true)); 
+        error_log(print_r('============================', true));
+        // start next iteration
+        $this->set_shedule_insert_rewrite_school_reviews($page);
+
+    }
+    
+    public function insert_rewrite_course_reviews($page) {
+
+        update_option( 'parser_status_course_views', true );
+        $start = microtime(true);
+        $prompt = [];
+        $per_page = 5;
+        $pagenum = $page;
+        $offset = ($pagenum - 1) * $per_page;
+        $query = new WP_Comment_Query;
+        $comments = $query->query( [
+            'offset' => $offset,
+            'number' => $per_page,
+            'no_found_rows' => false,
+            'meta_query' => array(
+                'relation' => 'OR',
+                array(
+                    'key' => '_rewrite',
+                    'value' => true,
+                    'compare' => '!='
+                ),
+                array(
+                    'key' => '_rewrite',
+                    'compare' => 'NOT EXISTS'
+                )
+            )
+        ] );
+
+        if ( ! $comments ) {
+            $time = microtime(true) - $start; 
+            error_log(print_r('CLEAR CRON', true));
+            wp_clear_scheduled_hook( 'gepha_insert_rewrite_course_reviews', [$page-1] );
+            wp_clear_scheduled_hook( 'gepha_insert_rewrite_course_reviews', [$page] );
+            wp_clear_scheduled_hook( 'gepha_insert_rewrite_course_reviews' );
+            update_option( 'parser_status_course_views', false );
+            
+            return false;
+        }
+
+        $page++;
+        foreach ( $comments as $comment ) {
+            $content = strip_tags($comment->comment_content);
+            $content = str_replace(["\r\n", "\r", "\n", "'"], '', $content);
+            $content = mb_strimwidth($content, 0, 150, ''); // substr($content, 0, 300);
+            $prompt[] = 'rewrite this text in Russian no more than 250 characters: "' . $content . '"';
+        }
+
+        if ( $prompt ) {
+            $result = $this->rewrite_review($prompt);
+
+            if ( $result ) {
+                foreach ( $comments as $key => $comment ) {
+                    $text = $result[ $key ]->text;
+                    $data = [
+                        'comment_ID' => $comment->comment_ID,
+                        'comment_content' => $text,
+                    ];
+                    wp_update_comment( $data );
+                    update_comment_meta( $comment->comment_ID, '_rewrite', true );
+                }
+            } 
+        } 
+
+        $time = microtime(true) - $start; 
+        error_log(print_r(count($comments), true)); 
+        error_log(print_r($time, true)); 
+        error_log(print_r('============================', true));
+        // start next iteration
+        $this->set_shedule_insert_rewrite_course_reviews($page);
+    }
+
+    public function insert_school_reviews($page) {
+
+        global $wpdb;
+        // $start = microtime(true);
+        $table = $wpdb->prefix . 'school_comments';
+        $reviews_url = 'https://adminagregator.obrazoval.ru/api/reviews?perPage=' . $this->limit_reviews . '&page=' . $page . '&with[0]=content&with[1]=reviewable';
+        $reviews = $this->get_data_by_url($reviews_url);
+        
+        update_option( 'parser_status_school_views', true );
+
+        // https://adminagregator.obrazoval.ru/api/reviews?perPage=2000&page=1&filter[platform][0]=SkillFactory&filter[platform][1]=Коалиция&with[0]=content&with[1]=reviewable
+        // error_log(print_r('COUNT = ' . count($reviews['data']), true));
+        // error_log(print_r('PAGE = ' . $page, true));
+        
+        if ( ! count($reviews['data']) ) {
+            error_log(print_r('CLEAR CRON', true));
+            wp_clear_scheduled_hook( 'gepha_insert_school_reviews', [$page-1] );
+            wp_clear_scheduled_hook( 'gepha_insert_school_reviews', [$page] );
+            wp_clear_scheduled_hook( 'gepha_insert_school_reviews' );
+            update_option( 'parser_status_school_views', false );
+
+            return false;
+        }
+            
+        foreach ($reviews['data'] as $review) {
+
+            $term = term_exists( $review['reviewableTitle'], 'pa_onlajn-platforma' );
+
+            if ( $term == 0 || $term == null ) {
+                continue;
+            }
+
+            $review_id = $review['id'];
+            $duplicate = $wpdb->get_row("SELECT comment_ID FROM $table WHERE comment_ID = $review_id", ARRAY_A);
+
+            if ( $duplicate ) {
+                continue;
+            }
+
+            $comment_author    = ! isset( $review['author'] ) ? '' : $review['author'];
+            $comment_date      = ! isset( $review['date'] ) ? current_time( 'mysql' ) : $review['date'];
+            $comment_date_gmt  = ! isset( $review['date'] ) ? get_gmt_from_date( $review['date'] ) : $review['date'];
+            $comment_school_ID = ! isset( $term['term_id'] ) ? 0 : $term['term_id'];
+            $comment_rating    = ! isset( $review['rate'] ) ? 0 : $review['rate'];
+            $comment_approved  = 1;
+            $user_id = 0;
+            // $comment_content = $this->rerate_review($review['content']);
+            $comment_content = $review['content'];
+            $comment_content = ( empty($comment_content) || $comment_content == '.' ) ? $review['content'] : $comment_content;
+            $compacted = [
+                'comment_school_ID' => $comment_school_ID,
+            ];
+            $compacted += compact(
+                'comment_author',
+                'comment_date',
+                'comment_date_gmt',
+                'comment_content',
+                'comment_rating',
+                'comment_approved',
+                'user_id'
+            );
+
+            if ( ! $wpdb->insert( $table, $compacted ) ) {
+                continue;
+            }
+        }
+
+        $page++;
+        // $time = microtime(true) - $start; 
+
+        // error_log(print_r($time, true)); 
+        // error_log(print_r('============================', true));
+
+        // start next iteration
+        $this->set_shedule_insert_school_reviews($page);
+        
     }
 
     public function insert_courses($page) {
 
-        $start = microtime(true);
+        // $start = microtime(true);
         global $wpdb;
 
         require_once THEME_DIR . '/lib/phpQuery/phpQuery.php';
@@ -103,17 +326,20 @@ class UT_Parser {
         $tax_school_name = 'pa_onlajn-platforma';
         $tax_category_name = 'product_cat';
 
-        error_log(print_r('COUNT = ' . count($courses['data']), true));
-        error_log(print_r('PAGE = ' . $page, true));
+        // error_log(print_r('COUNT = ' . count($courses['data']), true));
+        // error_log(print_r('PAGE = ' . $page, true));
         
         if ( ! count($courses['data']) ) {
             error_log(print_r('CLEAR CRON', true));
             wp_clear_scheduled_hook( 'gepha_update_woo_products', [$page-1] );
             wp_clear_scheduled_hook( 'gepha_update_woo_products', [$page] );
             wp_clear_scheduled_hook( 'gepha_update_woo_products' );
+            update_option( 'parser_status_courses', false );
 
             return false;
-        }
+        } 
+
+        update_option( 'parser_status_courses', true );
             
         foreach ($courses['data'] as $course) {
 
@@ -240,12 +466,80 @@ class UT_Parser {
         // exit();
 
         // теперь в переменной $time содержится float со значением выполнения скрипта в секундах. дело осталось за банальными number_format() и echo.
-        $time = microtime(true) - $start; 
-        error_log(print_r($time, true)); 
-        error_log(print_r('============================', true));
+        // $time = microtime(true) - $start; 
+        // error_log(print_r($time, true)); 
+        // error_log(print_r('============================', true));
 
         // start next iteration
         $this->set_shedule_update_woo_products($page);
+    }
+    
+    public function insert_course_reviews($page) {
+
+        // $start = microtime(true);
+        global $wpdb;
+
+        $reviews_url = 'https://adminagregator.obrazoval.ru/api/reviews?perPage=' . $this->limit_reviews . '&page=' . $page . '&filter[only_course_reviews]=true&with[0]=content&with[1]=reviewable';
+        $reviews = $this->get_data_by_url($reviews_url);
+        update_option( 'parser_status_course_views', true );
+
+        error_log(print_r('COUNT = ' . count($reviews['data']), true));
+        error_log(print_r('PAGE = ' . $page, true));
+        
+        if ( ! count($reviews['data']) ) {
+            error_log(print_r('CLEAR CRON', true));
+            wp_clear_scheduled_hook( 'gepha_insert_product_reviews', [$page-1] );
+            wp_clear_scheduled_hook( 'gepha_insert_product_reviews', [$page] );
+            wp_clear_scheduled_hook( 'gepha_insert_product_reviews' );
+            update_option( 'parser_status_course_views', false );
+
+            return false;
+        }
+            
+        foreach ($reviews['data'] as $review) {
+
+            $review_id = $review['id'];
+            // $duplicate = $wpdb->get_row("SELECT comment_id FROM $wpdb->commentmeta WHERE meta_key = '_review_id' AND meta_value = $review_id", ARRAY_A);
+            $duplicate = get_comment_meta( $review_id, '_review_id', true );
+
+            if ( $duplicate ) {
+                continue;
+            }
+
+            $reviewableId = $review['reviewableId'];
+            $course_data = $wpdb->get_row("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_course_id' AND meta_value = $reviewableId", ARRAY_A);
+
+            if ( ! $course_data ) {
+                continue;
+            }
+
+            // $content = $this->rerate_review($review['content']);
+            // $content = ( empty($content) || $content == '.' ) ? $review['content'] : $content;
+            $content = $review['content'];
+            $data = [
+                'comment_post_ID' => $course_data['post_id'],
+                'comment_author' => $review['author'],
+                'comment_author_email' => '',
+                'comment_content' => $content,
+                'comment_date' => $review['date'],
+                'comment_approved' => 1,
+                'comment_type' => 'review',
+            ];
+            $comment_id = wp_insert_comment( wp_slash($data) );
+            update_comment_meta( $comment_id, 'rating', intval($review['rate']) );
+            update_comment_meta( $comment_id, '_review_id', $comment_id );
+            update_comment_meta( $comment_id, 'vote', random_int(0, 30) );
+            // error_log(print_r($review['author'], true));
+        }
+
+        $page++;
+        // $time = microtime(true) - $start; 
+
+        // error_log(print_r($time, true)); 
+        // error_log(print_r('============================', true));
+
+        // start next iteration
+        $this->set_shedule_insert_product_reviews($page);
     }
 
     public function set_attr_product( $product, $taxonomy, $term_id ) {
@@ -468,6 +762,54 @@ class UT_Parser {
         wp_clear_scheduled_hook( 'gepha_update_woo_products', [$page] );
         wp_schedule_event( $time, $interval, 'gepha_update_woo_products', [$page]);
     }
+    
+    public function set_shedule_insert_product_reviews($page) {
+
+        // date_default_timezone_set('Asia/Tbilisi');
+        date_default_timezone_set('UTC');
+        $interval = 'every_15_minutes';
+        $time = time();
+        // remove shadule event for create new shedule with another interval
+        wp_clear_scheduled_hook( 'gepha_insert_product_reviews', [$page-1] );
+        wp_clear_scheduled_hook( 'gepha_insert_product_reviews', [$page] );
+        wp_schedule_event( $time, $interval, 'gepha_insert_product_reviews', [$page]);
+    }
+    
+    public function set_shedule_insert_school_reviews($page) {
+
+        // date_default_timezone_set('Asia/Tbilisi');
+        date_default_timezone_set('UTC');
+        $interval = 'every_15_minutes';
+        $time = time();
+        // remove shadule event for create new shedule with another interval
+        wp_clear_scheduled_hook( 'gepha_insert_school_reviews', [$page-1] );
+        wp_clear_scheduled_hook( 'gepha_insert_school_reviews', [$page] );
+        wp_schedule_event( $time, $interval, 'gepha_insert_school_reviews', [$page]);
+    }
+    
+    public function set_shedule_insert_rewrite_school_reviews($page) {
+
+        // date_default_timezone_set('Asia/Tbilisi');
+        date_default_timezone_set('UTC');
+        $interval = 'every_15_minutes';
+        $time = time();
+        // remove shadule event for create new shedule with another interval
+        wp_clear_scheduled_hook( 'gepha_insert_rewrite_school_reviews', [$page-1] );
+        wp_clear_scheduled_hook( 'gepha_insert_rewrite_school_reviews', [$page] );
+        wp_schedule_event( $time, $interval, 'gepha_insert_rewrite_school_reviews', [$page]);
+    }
+    
+    public function set_shedule_insert_rewrite_course_reviews($page) {
+
+        // date_default_timezone_set('Asia/Tbilisi');
+        date_default_timezone_set('UTC');
+        $interval = 'every_15_minutes';
+        $time = time();
+        // remove shadule event for create new shedule with another interval
+        wp_clear_scheduled_hook( 'gepha_insert_rewrite_course_reviews', [$page-1] );
+        wp_clear_scheduled_hook( 'gepha_insert_rewrite_course_reviews', [$page] );
+        wp_schedule_event( $time, $interval, 'gepha_insert_rewrite_course_reviews', [$page]);
+    }
 
     public function add_cron_recurrence_interval( $schedules ) {
 
@@ -517,6 +859,85 @@ class UT_Parser {
         ];
          
         return $schedules;
+    }
+
+    public function rerate_review($zapyt) {
+
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $this->chatgpt_key . ''
+        ];
+        $data = [
+            'model' => 'text-davinci-003',
+            'prompt' => $zapyt,
+            'max_tokens' => 1024,
+            'temperature' => 0.8
+        ];
+        $ch = curl_init("https://api.openai.com/v1/completions");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        if (curl_error($ch)) {
+            $generate_txt = '';
+        } else {
+            $response = json_decode(curl_exec($ch), true);
+            error_log(print_r($response, true));
+            $generate_txt = $response['choices'][0]['text']; // тут буде відповідь від ChatGPT
+        }
+        curl_close($ch);
+
+        return $generate_txt;
+    }
+    
+    public function rewrite_review($prompt) {
+
+        $url = 'https://api.openai.com/v1/completions';
+        $headers = array(
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $this->chatgpt_key,
+        );
+
+        // Set the prompts and parameters for the API request
+        $data = array(
+            'model' => 'text-davinci-003',
+            'prompt' => $prompt,
+            // [
+            //     'rewrite this text in Russian no more than 250 characters without line breaks "Всем доброго дня. Хочу поделиться фидбеком о курсе java-разработчик. Хочу похвалить подачу материала, объясняют все крайне понятно и подробно для новичков, но и лишней воды нет. Лекции не затянутые, смотреть приятно, а главное быстро получаешь новые знания, которые потом оттачиваешь на практических заданиях. Их кстати довольно много, у меня они занимают большую часть обучения. К менторам часто хожу с вопросами, когда что-то не понятно. Отвечают всегда в течение дня, очень дружелюбные и всегда готовы помочь"',
+            //     'rewrite this text in Russian no more than 250 characters without line breaks "Пришел на курс по питону по рекомендации знакомого, он в айтишке работает и меня зазывал, рассказывал много про питон. Я полазил, повыбирал курсы, посравнивал отзывы. Остановился на продуктстаре из-за цены и материалов, которые они предлагали. Плюс подкупила гарантия трудоустройства, много людей писали про нее в отзывах. Что скажу: курс своих денег стоит. Лекции смотрелись быстро, основную часть обучения занимала сама практика. Мой знакомый подсказал мне проект для портфолио, поэтому все дз я делал для этого проекта. Хорошая обратная связь от ментора, всегда отвечал в течение суток и давал развернутый фидбек по моим ошибкам. Курсом крайне доволен, готов рекомендовать к приобритению"',
+            //     'rewrite this text in Russian no more than 250 characters without line breaks "Обучаюсь в МАЕД на курсе «Менеджер по маркетплейсам». Выбирала школу по высокому рейтингу, адекватной стоимости курса, удобной форме оплаты и рада, что не ошиблась. Получаю новые для меня знания и навыки в профессии благодаря обширной базе курса. Удобная форма подачи материала, можно обучаться в своем режиме. Много домашних заданий для закрепления знаний, ссылок на материалы для получения дополнительной информации. Каждую неделю проводятся вебинары. Спасибо МАЕД и кураторам курса!"',
+            //     'rewrite this text in Russian no more than 500 characters without line breaks "Закончил обучаться на большом курсе по Java, вчера получил свой диплом. Хочу похвалить менторов, за то что терпиливо отвечали на все вопросы, ежедневно правили мои работы и поддерживали, когда чувствовал спад мотивации. По программе нареканий нет, все четко, подробно и понятно. Занимался на протяжении 10 месяцев по 2 часа после работы, где-то чуть больше, где-то меньше. Сейчас активно ищу работу с карьерным центром, девушка-консультант отзывчивая и со всем максимально помогает. Часто рекоммендую курсы своим знакомым, и всем остальным тоже советую, не прогадаете."',
+            //     'rewrite this text in Russian no more than 250 characters without line breaks "Достоинства: Кураторы Подача Недостатки: Для меня не было В декабре 2022 закончил курс "дизайн логотипа и фирменного стиля". Круто, что доступ к курсу не пропадает после его прохождения, интересующие моменты всегда можно освежить. Приятная подача лекционного материала, понятные презентации с примерами. До этого имел опыт прохождения курсов на других платформах, хочется похвалить звук и приятную обратную связь. Благодаря курсу узнал новые фишки для себя. Курс хорошо подойдёт начинающим дизайнерам, даёт грамотное погружение в профессию. Топ за свои деньги"',
+            // ],
+            'max_tokens' => 1024,
+            'temperature' => 1, // 0.8
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        // Handle the API response
+        if ($response) {
+            $json = json_decode($response);
+
+            if ($json->choices) {
+                return $json->choices;
+                // foreach ($json->choices as $choice) {
+                    // $text = $choice->text;
+                    // $text = str_replace('<br>', '', $text);
+                    // echo $text . "\n\n\n";
+                // }
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
     }
     
 } 
