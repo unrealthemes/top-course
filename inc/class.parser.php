@@ -9,8 +9,7 @@ class UT_Parser {
 
     private $limit_courses = 20;
     private $limit_reviews = 10;
-    // private $chatgpt_key = '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';
-    private $chatgpt_key = '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';
+    private $chatgpt_key = 'YOUR_API_KEY';
 
     static public function get_instance() {
 
