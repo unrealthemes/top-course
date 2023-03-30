@@ -235,14 +235,18 @@ class UT_Home {
 
         // schools
 		$terms = get_terms('pa_onlajn-platforma', ['hide_empty' => false]);
-        // reviews
+        // REVIEWS
+        // course reviews
         $reviews_count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->comments WHERE comment_type = 'review' AND comment_approved = 1" );
+        // school reviews
+        $table = $wpdb->prefix . 'school_comments';
+        $school_reviews_count = $wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE comment_approved = 1" );
 
         return [
             'courses' => $count_posts->publish,
             // 'teachers' => 1,
             'schools' => count($terms),
-            'reviews' => $reviews_count,
+            'reviews' => $reviews_count + $school_reviews_count,
         ];
     }
 
