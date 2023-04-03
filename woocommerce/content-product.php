@@ -147,7 +147,7 @@ $rating_data = ut_help()->school_review->get_rating($school->term_id);
 			<div class="cat_item_r">
 				<div class="price">
 
-					<?php if ( $product->get_price() != 0 ) : ?>
+					<?php if ( $product->get_price() ) : ?>
 						<?php echo wc_price($product->get_price()); ?>
 					<?php else : ?>
                         бесплатно

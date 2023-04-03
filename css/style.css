@@ -205,6 +205,7 @@ header {/* position: relative; *//* z-index: 99999; */position: fixed;z-index: 1
 .review_title {margin-bottom: 20PX;position: relative;}
 .review_l {float: left;display: inline-block;height: 54px;font-weight: 700;text-align: center;/* padding-top: 20px; */font-size: 20px;color: white;width: 54px;background: #4967D0;border-radius: 3px;margin-right: 20px;line-height: 54px;}
 .review_r {display: inline-block;}
+.review_l a img {max-height: 40px;}
 .rating {display: flex;/* float: left; */align-items: center;/* flex-direction: row; */line-height: 1;width: 150px;}
 .review_niz {align-items: center;display: flex;/* justify-content: space-between; */margin-top: 14px;flex-direction: row;}
 .quantity_inner {display: inline-grid;gap: 14px;grid-auto-flow: column;}

@@ -94,7 +94,7 @@ while ( have_posts() ) :
                         </div>
                     <?php endif; ?>
 
-                    <?php if ( $product->get_price() != 0 ) : ?>
+                    <?php if ( $product->get_price() ) : ?>
                         <div class="price">
                             <?php echo wc_price($product->get_price()); ?>
 

@@ -21,10 +21,6 @@ if ($school) :
         $img_id = get_field('img_school', $school);
         $img_url = wp_get_attachment_image_url( $img_id, 'full' ); 
         $school_url = get_field('link_school', $school);
-
-        echo '<pre>';
-        print_r( get_term_meta( $school->term_id, 'school_id', true ) );
-        echo '</pre>';
     ?> 
 
         <div class="container_di">
